@@ -47,6 +47,7 @@ function Bgmap() {
     this.backpic = null;
 	this.bitmap = null;
 	this.map_distance = 500;
+	this.map_over = false;
 	this.bitmap_point_width = 16;
 	this.bitmap_point_height = 32;
 	this.now_bitmap_rowtop = 0;
@@ -67,6 +68,8 @@ function Bgmap() {
 			Crafty.background(this.backpic + '0px -' + this.map_distance.toString() + 'px');
 			this.get_enemy();
 		}
+		else
+			this.map_over = true;
 	}
 	this.map_passive = function(x, y , w, h) {
 		// 1 出地图外  2 和地图障碍碰撞 0 可通过
@@ -142,4 +145,26 @@ function Explod(name, model) {
 
 
 	return explod;
+}
+
+
+function Bossspider_both_Animation(x, y) {
+    // 大蜘蛛出场动画 渲染
+    var name = "Bossspider_both_Animation"
+	var conf = CONF[name];
+	var picture = conf["img"];
+	var rect = conf["rect"];
+    Crafty.sprite(picture, {animation:[0,0,rect[0],rect[1]] });
+    var animation = Crafty.e("2D, DOM, animation")
+    animation.attr({
+		x: x,
+		y: y,
+	})
+	animation.bind('EnterFrame', function(){
+		this.y += 1;
+		if (this.y >= 0)
+			this.destroy();
+   	});
+   	return animation;
+
 }

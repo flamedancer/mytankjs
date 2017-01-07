@@ -45,7 +45,8 @@ function Stage_startboss(stage) {
 	this.stage = stage;	
 	this.do_actions = function() { this.stage.startboss()};
 	this.check_conditions = function() {
-        return "boss";
+		if (this.stage.startboss_over())
+        	return "boss";
 	};
 }
 
@@ -93,6 +94,7 @@ function Stage() {
 	stage.statu = null;
 	stage.servant_over = false;
     stage.boss_both = false;
+    stage.boss_animation_over = false;
 	stage.brain = new StateMachine();
 	stage.brain.add_state(new Stage_begin(stage));
 	stage.brain.add_state(new Stage_servant(stage));
@@ -127,7 +129,25 @@ function Stage1() {
 			this.stage_begin = true;
 			bgmap.reset('111');
  			stage.mytank = MyTank([88, 384]);
- 		}
+ 		},
+ 		servant : function() {this.servant_over = bgmap.map_over},
+ 		startboss: function() {
+ 			if (typeof(this.animation_bothof_boss) == "undefined" && 
+ 				!this.boss_both){
+	        	// 出场动画
+	        	this.animation_bothof_boss = Bossspider_both_Animation(160, -80);
+	        	this.boss_animation_over = true;
+	        }
+   		},
+   		boss: function() {
+   			this.boss_both = true;
+   		},
+   		startboss_over: function() {
+   			if (typeof(this.animation_bothof_boss) == "undefined" && 
+ 				this.boss_animation_over)
+ 				return true;
+ 			return false;
+   		}
 	});
 
 }

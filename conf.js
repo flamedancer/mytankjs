@@ -54,6 +54,10 @@ CONF = {
 	"bulletexplod": {
 		"imgs": ["assets/shotdied.gif"],
 		"rects": [[30, 30]],
+	},
+	"Bossspider_both_Animation": {
+		"img": "assets/bossspider.gif",
+		"rect": [60, 60],
 	}
 
 }
