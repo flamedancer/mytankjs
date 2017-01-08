@@ -1,3 +1,6 @@
+ENTITYS = {}
+
+
 function State() {
 　　　　this.name = "";
 		this.do_actions = function() {};
@@ -150,20 +153,23 @@ function Explod(name, model) {
 
 function Bossspider_both_Animation(x, y) {
     // 大蜘蛛出场动画 渲染
-    var name = "Bossspider_both_Animation"
+    var name = "Bossspider_both_Animation";
 	var conf = CONF[name];
 	var picture = conf["img"];
 	var rect = conf["rect"];
     Crafty.sprite(picture, {animation:[0,0,rect[0],rect[1]] });
-    var animation = Crafty.e("2D, DOM, animation")
+    var animation = Crafty.e("2D, DOM, animation");
     animation.attr({
 		x: x,
 		y: y,
-	})
+		is_over: false,
+	});
 	animation.bind('EnterFrame', function(){
 		this.y += 1;
-		if (this.y >= 0)
+		if (this.y >= 30) {
+			this.is_over = true;
 			this.destroy();
+		}	
    	});
    	return animation;
 

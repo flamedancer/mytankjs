@@ -9,6 +9,7 @@ DIRECTION_R = 1;
 
 CONF = {
 	"mytank": {
+		"ai": false,
 		"img": "assets/mytank.gif",
 		"rect": [32, 32],
 		"speed": 1,
@@ -17,7 +18,7 @@ CONF = {
 	},
 	"aitank": {
 		"img": "assets/aitank.gif",
-		"rect": [30, 30],
+		"rect": [30, 29],
 		"speed": 2,
     	"shot_rate": 0.015,
     	"turn_rate": 0.01,
@@ -35,6 +36,16 @@ CONF = {
     	"maxhealth": 120,
     	"died_name": "tankexplod",
 	},
+	"bossspider": {
+		"img": "assets/bossspider.gif",
+		"rect": [60, 60],
+		"speed": 7,
+    	"shot_rate": 0.04,
+    	"turn_rate": 0.01,
+       	"bullet": "NormalBullet",
+    	"maxhealth": 1200,
+		"died_name": "bulletexplod",
+	},
 	"NormalBullet": {
 		"img": "assets/shot.gif",
 		"rect": [6, 18],
@@ -47,6 +58,7 @@ CONF = {
 		"speed": 5,
 		"died_name": "bulletexplod",
 	},
+
 	"tankexplod": {
 		"imgs": ["assets/bomb_1.gif", "assets/bomb_2.gif", "assets/bomb_3.gif"],
 		"rects": [[80, 80]],

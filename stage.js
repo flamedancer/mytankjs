@@ -54,12 +54,12 @@ function Stage_boss(stage) {
 	State.call();
 	this.name = "boss";
 	this.stage = stage;	
-	this.do_actions = function() { this.stage.servant()};
+	this.do_actions = function() { this.stage.boss()};
 	this.check_conditions = function() {
         if (this.stage.servant_over)
             return "startboss";
-        else if (this.stage.player == 'died')
-            return "fail";
+        // else if (this.stage.player == 'died')
+        //     return "fail";
         return;
 	};
 }
@@ -130,7 +130,9 @@ function Stage1() {
 			bgmap.reset('111');
  			stage.mytank = MyTank([88, 384]);
  		},
- 		servant : function() {this.servant_over = bgmap.map_over},
+ 		servant : function() {
+ 			this.servant_over = (bgmap.map_over && Crafty("ai").length == 0);
+ 		},
  		startboss: function() {
  			if (typeof(this.animation_bothof_boss) == "undefined" && 
  				!this.boss_both){
@@ -140,11 +142,13 @@ function Stage1() {
 	        }
    		},
    		boss: function() {
-   			this.boss_both = true;
+   			if (!(this.boss_both)) {
+	   			this.boss_both = true;
+				Bossspider([160, 30]);
+			}
    		},
    		startboss_over: function() {
-   			if (typeof(this.animation_bothof_boss) == "undefined" && 
- 				this.boss_animation_over)
+   			if (this.animation_bothof_boss.is_over)
  				return true;
  			return false;
    		}

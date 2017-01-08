@@ -35,11 +35,20 @@ function Bullet(name, owner) {
 	var rect = conf["rect"];
 	var speed = conf["speed"];
 	var now_speed = speed;
-	Crafty.sprite(picture, {bullet :[0,0,rect[0],rect[1]]});
-	var bullet = Crafty.e("2D, DOM, Collision, mving, bullet");
+	if (!(name in ENTITYS)) {
+		var obj = {};
+		obj[name] = [0,0,rect[0],rect[1]];
+		// Crafty.sprite(picture, {name:[0,0,rect[0],rect[1]]});
+		ENTITYS[name] = Crafty.sprite(picture, obj);
+	}
+	// Crafty.sprite(picture, {bullet :[0,0,rect[0],rect[1]]});
 
+	var bullet = Crafty.e("2D, DOM, Collision");
+	bullet.addComponent("bullet");
+	bullet.addComponent(name);
 	var postion = [owner.x + 0.5*((1+owner.direct[0])*owner.rect[0] + (owner.direct[0]-1)*rect[0]), owner.y + 0.5*((1+owner.direct[1])*owner.rect[1] + (owner.direct[1]-1)*rect[1])];
 	bullet.attr(conf);
+	bullet.origin("center");
 	bullet.attr({
 	  x: postion[0],
 	  y: postion[1],
@@ -53,7 +62,7 @@ function Bullet(name, owner) {
 			this.destroy();
 		}
 	})
-	bullet.origin("center");
+	
 
 	bullet.brain = new StateMachine();
 	bullet.brain.add_state(new Bulletstate_move(bullet));
@@ -74,9 +83,9 @@ function Bullet(name, owner) {
     	}
         // Crafty.log(hitData);
     })
-    // .bind("HitOff", function(comp) {
-    //     Crafty.log("Collision with Solid entity ended.");
-    // });
+    .bind("HitOff", function(comp) {
+        Crafty.log("Collision with Solid entity ended.");
+    });
 	return bullet;
 }
 
