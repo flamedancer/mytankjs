@@ -58,7 +58,7 @@ function Tank(name, postion) {
 
 function MyTank(postion) {
 	
-	var tank = Tank("Mytank", postion);
+	var tank = Tank("MyTank", postion);
 	tank.now_speed = 0;
 	tank.directs = [];
 	tank.direct = [0, -1];
@@ -218,7 +218,7 @@ function Tankstate_died(tank) {
 }
 
 function AiTank(postion) {
-	var tank = Tank("Aitank", postion);
+	var tank = Tank("AiTank", postion);
 	tank.shoting = 0;
 	tank.brain = new StateMachine();
 	tank.brain.add_state(new Tankstate_both(tank));
