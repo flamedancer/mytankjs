@@ -9,7 +9,7 @@ function Bulletstate_move(bullet) {
     	y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
     	map_status = bgmap.map_passive(x, y, this.mold.w, this.mold.h);
     	if ( map_status == 1)
-    		this.mold.destroy();
+			destroy(this.mold);
 		else if ( map_status == 2)
 			this.mold.died();
     	this.mold.x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
@@ -59,7 +59,7 @@ function Bullet(name, owner) {
 	  owner: owner,
 	  died: function() {
 			Explod(this.died_name, this);
-			this.destroy();
+			destroy(this);
 		}
 	})
 	

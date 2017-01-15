@@ -25,11 +25,29 @@ function Tank(name, postion) {
 		now_speed: now_speed,
 		name: name,
 		shot: function() {
-			eval(this.bullet + "(this)"); 
+			if (!(this.bullet))
+				return;
+			var bullet = eval(this.bullet)(this);
+			return bullet;
 		},
 		died: function() {
 			Explod(this.died_name, this);
-			this.destroy();
+			destroy(this);
+		},
+		stop: function() {
+			this.now_speed = 0;
+		},
+		turn: function(direct) {
+			if (direct[0] == -1 && direct[1] == 0)
+				this.rotation = -90;
+			else if (direct[0] == 1 && direct[1] == 0)
+				this.rotation = 90;
+			else if (direct[0] == 0 && direct[1] == -1)
+				this.rotation = 0;
+			else if (direct[0] == 0 && direct[1] == 1)
+				this.rotation = 180;
+			this.direct = direct;
+			this.now_speed = this.speed;
 		}
 	})
 	if (tank["ai"] != false)
@@ -47,31 +65,31 @@ function MyTank(postion) {
 	tank.direct_id = DIRECTION_U;
 	tank.bind('KeyDown', function(e) {
 	    if(e.key == Crafty.keys.A) {
-	      	this.direct = [-1, 0];
-	      	this.directs.push(DIRECTION_L);
-	      	this.direct_id = DIRECTION_L;
-	      	this.rotation = -90;
-	      	this.now_speed = this.speed;
+	      	var direct = [-1, 0];
+	      	this.drect_id = DIRECTION_L;
+	      	this.directs.push(this.drect_id);
+	      	turn(this, direct);
+	      	
 	    } else if (e.key == Crafty.keys.D) {
-	      	this.direct = [1, 0];
-	      	this.directs.push(DIRECTION_R);
-	      	this.direct_id = DIRECTION_R;
-	      	this.rotation = 90;
-	      	this.now_speed = this.speed;
+	      	var direct = [1, 0];
+	      	this.drect_id = DIRECTION_R;
+	      	this.directs.push(this.drect_id);
+	      	turn(this, direct);
+
 	    } else if (e.key == Crafty.keys.W) {
-	      	this.direct = [0, -1];
-	      	this.directs.push(DIRECTION_U);
-	      	this.direct_id = DIRECTION_U;
-	     	this.rotation = 0;
-	     	this.now_speed = this.speed;
+	      	var direct = [0, -1];
+	      	this.drect_id = DIRECTION_U;
+	      	this.directs.push(this.drect_id);
+	      	turn(this, direct);
+
 	    } else if (e.key == Crafty.keys.S) {
-	      	this.direct = [0, 1];
-	      	this.directs.push(DIRECTION_D);
-	      	this.direct_id = DIRECTION_D;
-	      	this.rotation = 180;
-	      	this.now_speed = this.speed;
+	      	var direct = [0, 1];
+	      	this.drect_id = DIRECTION_D;
+	      	this.directs.push(this.drect_id);
+	      	turn(this, direct);
+
 	    } else if (e.key == Crafty.keys.J) {
-			this.shot();
+			shot(this);
 	    }
     }).bind('KeyUp', function(e) {
 	    if(e.key == Crafty.keys.A) {
@@ -84,12 +102,11 @@ function MyTank(postion) {
 	      	this.directs.splice(this.directs.indexOf(DIRECTION_D), 1);
 	    }
 	    if (this.directs.length <= 0) {
-	   		this.now_speed = 0;
+	   		stop(this);
    		}
    		else {
    			this.direct_id = this.directs[this.directs.length - 1];
-   			this.direct = DIRECTIONS[this.direct_id];
-   			this.rotation = 90 * this.direct_id;
+   			turn(this, DIRECTIONS[this.direct_id]);
    		}
     });
 	tank.bind('EnterFrame', function(){
@@ -121,7 +138,7 @@ function Tankstate_move(tank) {
 	this.mold = tank;
 	this.do_actions = function() {
 		if (Math.random() <= this.mold.shot_rate)
-			this.mold.shot();
+			shot(this.mold);
 	};
 	this.check_conditions = function() {
     	if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
@@ -144,30 +161,53 @@ function Tankstate_thinkdirect(tank) {
 	this.mold = tank;
 	this.do_actions = function() {
 		var random_direct_id = [DIRECTION_U, DIRECTION_D, DIRECTION_L, DIRECTION_R][Math.ceil(Math.random()*4) - 1];
-		this.mold.direct = DIRECTIONS[random_direct_id];
-
-	};
-	this.check_conditions = function() {return "turn"};
-}
-
-function Tankstate_turn(tank, norotate) { 
-	State.call();
-	this.name = "turn";
-	this.mold = tank;
-	this.do_actions = function() {
-		if (!(norotate)) {
-			if (this.mold.direct[0] == -1 && this.mold.direct[1] == 0)
-				this.mold.rotation = -90;
-			else if (this.mold.direct[0] == 1 && this.mold.direct[1] == 0)
-				this.mold.rotation = 90;
-			else if (this.mold.direct[0] == 0 && this.mold.direct[1] == -1)
-				this.mold.rotation = 0;
-			else if (this.mold.direct[0] == 0 && this.mold.direct[1] == 1)
-				this.mold.rotation = 180;
-		}
+		turn(this.mold, DIRECTIONS[random_direct_id]);
 	};
 	this.check_conditions = function() {return "move"};
 }
+
+function Tankstate_thinkdirect_bytarget(tank) {
+	State.call();
+	this.name = "thinkdirect";
+	this.mold = tank;
+	this.do_actions = function() {
+        var target_pos = [this.mold.target.x, this.mold.target.y];
+        var self_pos = [this.mold.x, this.mold.y];
+        var path = [target_pos[0] - self_pos[0], target_pos[1] - self_pos[1]];
+        if (Math.abs(path[0]) > Math.abs(path[1])) {
+            var direct1 = [path[0] > 0 ? 1 : -1, 0];
+            var direct2 = [0, path[1] > 0  ? 1 : -1];
+        }
+        else {
+            var direct2 = [path[0] > 0 ? 1 : -1, 0];
+            var direct1 = [0, path[1] > 0  ? 1 : -1];
+        }
+        var directs = [direct1, direct2];
+        var first_chose = Math.random() > 0.5 ? 0 : 1;
+    	x = this.mold.x + direct1[0] * this.mold.now_speed;
+    	y = this.mold.y + direct1[1] * this.mold.now_speed;
+    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) > 0)
+    		var direct = directs[first_chose];
+    	else
+        	var direct = directs[1 - first_chose];
+        turn(this.model, direct);
+	};
+	this.check_conditions = function() {
+		return "move"
+	};
+}
+
+// function Tankstate_turn(tank, norotate) { 
+// 	State.call();
+// 	this.name = "turn";
+// 	this.mold = tank;
+// 	this.do_actions = function() {
+// 		if (!(norotate)) {
+
+// 		}
+// 	};
+// 	this.check_conditions = function() {return "move"};
+// }
 
 function Tankstate_died(tank) {
 	State.call();
@@ -183,14 +223,13 @@ function AiTank(postion) {
 	tank.brain = new StateMachine();
 	tank.brain.add_state(new Tankstate_both(tank));
 	tank.brain.add_state(new Tankstate_move(tank));
-	tank.brain.add_state(new Tankstate_turn(tank));
+	// tank.brain.add_state(new Tankstate_turn(tank));
 	tank.brain.add_state(new Tankstate_thinkdirect(tank));
 	tank.brain.add_state(new Tankstate_died(tank));
 	tank.both = null;
     tank.brain.set_state("both");
     tank.bind('EnterFrame', function(){
 		tank.brain.think();
-
 		
    	});
    	return tank;
@@ -208,10 +247,31 @@ function Bossspider(postion) {
 	tank.brain.add_state(new Tankstate_died(tank));
 	tank.both = null;
     tank.brain.set_state("both");
+    tank.shot = function() {
+        var pos = [this.x + Math.floor(this.w/2), this.y];
+        Terrorsmallspider(pos);
+    }
     tank.bind('EnterFrame', function(){
 		tank.brain.think();
+   	});
+   	return tank;
+}
 
-		
+
+function Terrorsmallspider(postion) {
+	var tank = Tank("Terrorsmallspider", postion);
+	tank.target = Crafty("mytank").get(0);
+	tank.shoting = 0;
+	tank.brain = new StateMachine();
+	tank.brain.add_state(new Tankstate_both(tank));
+	tank.brain.add_state(new Tankstate_move(tank));
+	// tank.brain.add_state(new Tankstate_turn(tank));
+	tank.brain.add_state(new Tankstate_thinkdirect_bytarget(tank));
+	tank.brain.add_state(new Tankstate_died(tank));
+	tank.both = null;
+    tank.brain.set_state("both");
+    tank.bind('EnterFrame', function(){
+		tank.brain.think();		
    	});
    	return tank;
 }

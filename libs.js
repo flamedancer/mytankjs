@@ -54,11 +54,14 @@ function Bgmap() {
 	this.bitmap_point_width = 16;
 	this.bitmap_point_height = 32;
 	this.now_bitmap_rowtop = 0;
+	this.fresh_bg = function() {
+		Crafty.background(this.backpic + '0px -' + this.map_distance.toString() + 'px');
+	}
 	this.reset = function(mapname) {
 		this.backpic = 'url(assets/maps/' + mapname +'.jpg)';
 		this.bitmap = BITMAP[mapname];
 		this.map_distance = this.bitmap.length * this.bitmap_point_height - SCREEN_HEIGHT;
-		Crafty.background(this.backpic + '0px -' + this.map_distance.toString() + 'px');
+		this.fresh_bg();
 	}
 	this.move_by_player = function(player) {
 		if (this.map_distance > 0) {
@@ -68,7 +71,7 @@ function Bgmap() {
 			Crafty("2D").each(function() {
 				this.y += player.now_speed;
 			});
-			Crafty.background(this.backpic + '0px -' + this.map_distance.toString() + 'px');
+			this.fresh_bg();
 			this.get_enemy();
 		}
 		else
@@ -104,7 +107,7 @@ function Bgmap() {
 				var enemy_left = left_bit_point * this.bitmap_point_width;
 				this.bitmap[now_bitmap_rowtop][left_bit_point] = 0;
 				 if (enemy_id == 6)
-				 	AiTank([enemy_left, 0]);
+				 	both("AiTank", [enemy_left, 0]);
 			}
 	}
 }

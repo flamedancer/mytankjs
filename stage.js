@@ -1,3 +1,5 @@
+cur_stage = null;
+
 function Stage_nothing(stage) {
 	State.call();
 	this.name = "nothing";
@@ -128,7 +130,8 @@ function Stage1() {
 		begin : function() {
 			this.stage_begin = true;
 			bgmap.reset('111');
- 			stage.mytank = MyTank([88, 384]);
+			if (GAME_MODEL <= 2)
+				stage.mytank = both("MyTank", [88, 384]);
  		},
  		servant : function() {
  			this.servant_over = (bgmap.map_over && Crafty("ai").length == 0);
@@ -157,4 +160,11 @@ function Stage1() {
 }
 
 
+function enter_stage(stage_num) {
+	Crafty.defineScene("stage1", function(attributes) {
+		cur_stage = new Stage1();
 
+	});
+	Crafty.enterScene("stage1");
+
+}	

@@ -7,6 +7,23 @@ DIRECTION_D = 2;
 DIRECTION_L = 3;
 DIRECTION_R = 1;
 
+
+function get_direct_id(direct) {
+	if (direct[0] == 0) {
+		if (direct[1] == 1)
+			return DIRECTION_D
+		else
+			return DIRECTION_U
+	}
+	else {
+		if (direct[0] == 1)
+			return DIRECTION_R
+		else
+			return DIRECTION_L
+	}
+}
+
+
 CONF = {
 	"mytank": {
 		"ai": false,
@@ -39,11 +56,20 @@ CONF = {
 	"bossspider": {
 		"img": "assets/bossspider.gif",
 		"rect": [60, 60],
-		"speed": 7,
-    	"shot_rate": 0.04,
+		"speed": 1,
+    	"shot_rate": 0.05,
     	"turn_rate": 0.01,
-       	"bullet": "NormalBullet",
+       	"bullet": "Terrorsmallspider",
     	"maxhealth": 1200,
+		"died_name": "bulletexplod",
+	},
+	"Terrorsmallspider": {
+		"img": "assets/terrorsmallspider.gif",
+		"rect": [20, 20],
+		"speed": 2,
+    	"shot_rate": 0,
+    	"turn_rate": 0.02,
+    	"maxhealth": 20,
 		"died_name": "bulletexplod",
 	},
 	"NormalBullet": {

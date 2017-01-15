@@ -18,6 +18,8 @@ body{ text-align:center}
 <script type="text/javascript" src="conf.js"></script>
 <script type="text/javascript" src="assets/maps/mapjs.js"></script>
 <script type="text/javascript" src="libs.js"></script>
+<script type="text/javascript" src="control.js"></script>
+<script type="text/javascript" src="socket.js"></script>
 <script type="text/javascript" src="stage.js"></script>
 <script type="text/javascript" src="bullet.js"></script>
 <script type="text/javascript" src="tanks.js"></script>
@@ -71,10 +73,7 @@ body{ text-align:center}
  //    	this.x = this.x + this.direct[0];
  //    	this.y = this.y + this.direct[1];
  //   	});
-	Crafty.defineScene("square", function(attributes) {
-		new Stage1();
-	});
-	Crafty.enterScene("square");
+ 	start_game();
 
 </script>
 </html>
