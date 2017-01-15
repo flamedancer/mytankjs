@@ -46,8 +46,8 @@ s.onmessage = function(e) {
 	    	recv_partner_ready();
     		Crafty.pause();
 	    	break;
-	    case "recv_init":
-	    	recv_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities']);
+	    case "rsp_init":
+	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities']);
 	    	Crafty.pause();
 	    	send_partner_ready();
 	    	break;
@@ -114,9 +114,9 @@ function send_init() {
 	send(json);
 }
 
-function recv_init(stage_num, stage_info, map_distance, entities) {
+function rsp_init(stage_num, stage_info, map_distance, entities) {
 	enter_stage(stage_num);
-	cur_stage.attr(stage_info);
+	// cur_stage.attr(stage_info);
 	bgmap.map_distance = map_distance;
 	bgmap.fresh_bg();
 
