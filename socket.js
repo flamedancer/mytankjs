@@ -10,16 +10,19 @@ function get_id() {
 	return id_seq;
 }
 
-var s = new WebSocket("ws://127.0.0.1:9091/");
+var s = new WebSocket("ws://192.168.1.105:9091/");
 s.onopen = function() {
 //alert("connected !!!");
-    s.send('{"c":"s"}');   // begin  command
+    send_start();  // begin  command
 };
 
 s.onmessage = function(e) {
     var obj = eval("(" + e.data + ")");
     var cmd = obj.c;
     switch (cmd) {
+    	case "s":
+    		recv_start(obj["game_model"]);
+    		break;
 	    case "b":
 	    	recv_tank_both(obj["name"], obj["pos"], obj["sid"]);
 	    	break;
@@ -57,6 +60,28 @@ function send(obj) {
 	s.send(msg); 
 }
 
+
+function send_start() {
+	var json = {
+		c: 's',
+	}
+	send(json);
+}
+
+function recv_start(gmodel) {
+	GAME_MODEL = gmodel;
+	if (GAME_MODEL == 3)
+		req_init();
+	else
+		enter_stage("1");
+}
+
+function req_init() {
+	var json = {
+		c: 'req_init',
+	}
+	send(json);
+}
 
 function send_init() {
 	var entities = {};

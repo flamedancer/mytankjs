@@ -64,6 +64,6 @@ function stop(tank) {
 }
 
 function start_game() {
-	if (GAME_MODEL <= 2)
+	if (GAME_MODEL <= 1)
 		enter_stage("1");
 }

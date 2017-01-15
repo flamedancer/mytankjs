@@ -8,18 +8,18 @@ all_players = []
 
 rooms = {}  # room_id: [p1, p2]
 
-def get_room_id(player):
+def get_game_model(player):
 	for room_id, players in rooms.items():
 		if len(players) == 1:
 			origin_player = players[0]
 			players.append(player)
 			origin_player.partner = player
 			player.partner = origin_player
-			return room_id
+			return 3
 	else:
 		new_room_id = player.core_id
 		rooms[new_room_id] = [player]
-		return new_room_id
+		return 2
 
 
 class Player(object):
@@ -47,7 +47,8 @@ class Player(object):
 		info = json.loads(msg)
 		if info['c'] == 's':
 			# info['uuid'] = self.core_id
-			get_room_id(self)
+			game_model = get_game_model(self)
+			info['game_model'] = game_model
 			self.send_self(info)
 		elif info['c'] == 'req_init':
 			self.send_partner(info)
@@ -79,4 +80,4 @@ agent = "gevent-websocket/%s" % (geventwebsocket.get_version())
 
 
 print "Running %s from %s" % (agent, path)
-geventwebsocket.WebSocketServer(("127.0.0.1", 9091), app, debug=True).serve_forever()
+geventwebsocket.WebSocketServer(("0.0.0.0", 9091), app, debug=True).serve_forever()
