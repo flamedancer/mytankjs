@@ -25,7 +25,7 @@ function get_direct_id(direct) {
 
 
 CONF = {
-	"Mytank": {
+	"MyTank": {
 		"ai": false,
 		"img": "assets/mytank.gif",
 		"rect": [32, 32],
@@ -33,7 +33,7 @@ CONF = {
 		"bullet": "NormalBullet",
 		"died_name": "tankexplod",
 	},
-	"Aitank": {
+	"AiTank": {
 		"img": "assets/aitank.gif",
 		"rect": [30, 29],
 		"speed": 2,
@@ -43,7 +43,7 @@ CONF = {
 	    "maxhealth": 10,
 	    "died_name": "tankexplod",
 	},
-	"Icetank": {
+	"IceTank": {
 		"img": "assets/ai_icetank.gif",
 		"rect": [30, 30],
 		"speed": 1,
