@@ -167,6 +167,7 @@ function Tankstate_thinkdirect(tank) {
 	this.name = "thinkdirect";
 	this.mold = tank;
 	this.do_actions = function() {
+		this.mold.stop();
 		var random_direct_id = [DIRECTION_U, DIRECTION_D, DIRECTION_L, DIRECTION_R][Math.ceil(Math.random()*4) - 1];
 		turn(this.mold, DIRECTIONS[random_direct_id]);
 	};

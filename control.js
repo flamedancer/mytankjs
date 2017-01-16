@@ -1,4 +1,4 @@
-GAME_MODEL = 2;   // 0 单机 1双人 2 联网主机  3 联网辅机
+GAME_MODEL = 0;   // 0 单机 1双人 2 联网主机  3 联网辅机
 
 
 function both(tank_name, pos) {

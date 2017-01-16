@@ -128,6 +128,8 @@ function Stage1() {
 	stage.start_image = "assets/ai_icetank.gif";
 	stage.attr({
 		begin : function() {
+			if (this.stage_begin)
+				return
 			this.stage_begin = true;
 			bgmap.reset('111');
 			if (GAME_MODEL <= 2)
