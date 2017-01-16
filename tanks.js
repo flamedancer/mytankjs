@@ -144,18 +144,22 @@ function Tankstate_move(tank) {
 	this.name = "move";
 	this.mold = tank;
 	this.do_actions = function() {
-		if (Math.random() <= this.mold.shot_rate)
-			shot(this.mold);
+		if (GAME_MODEL <= 2) {
+			if (Math.random() <= this.mold.shot_rate)
+				shot(this.mold);
+		}
 	};
 	this.check_conditions = function() {
-    	if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
-    		return this.mold.died();
-    	x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
-    	y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
-    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) > 0)
-    		return "thinkdirect";
-		if (Math.random() <= this.mold.turn_rate)
-			return "thinkdirect";
+		if (GAME_MODEL <= 2) {
+	    	if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
+	    		return this.mold.died();
+	    	x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
+	    	y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
+	    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) > 0)
+	    		return "thinkdirect";
+			if (Math.random() <= this.mold.turn_rate)
+				return "thinkdirect";
+		}
     	this.mold.x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
     	this.mold.y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
 		return "move";
