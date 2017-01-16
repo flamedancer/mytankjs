@@ -38,7 +38,6 @@ class Player(object):
 			self.partner.wc.send(msg)
 
 	def broad(self, info ):
-		print "broad", info
 		msg = json.dumps(info)
 		self.send_self(msg)
 		self.send_partner(msg)
@@ -61,17 +60,14 @@ class Player(object):
 def app(environ, start_response):
     ws = environ.get("wsgi.websocket")
     core_id = 11 #str(environ['HTTP_SEC_WEBSOCKET_KEY'])
-    print "debg", core_id
     player = Player(ws, core_id)
-    print player
     all_players.append(player)
     try: 
         while True:
 	        msg = ws.receive()
-	        print msg
 	        player.handler(msg)
     except geventwebsocket.WebSocketError, ex:
-        print "{0}: {1}".format(ex.__class__.__name__, ex)
+        print "player left: ", player.core_id
 
 
 
@@ -80,4 +76,4 @@ agent = "gevent-websocket/%s" % (geventwebsocket.get_version())
 
 
 print "Running %s from %s" % (agent, path)
-geventwebsocket.WebSocketServer(("0.0.0.0", 9091), app, debug=True).serve_forever()
+geventwebsocket.WebSocketServer(("0.0.0.0", 9091), app, debug=False).serve_forever()

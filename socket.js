@@ -27,7 +27,7 @@ s.onmessage = function(e) {
 	    	recv_tank_both(obj["name"], obj["pos"], obj["sid"]);
 	    	break;
 	    case "t":
-	    	recv_turn(obj["sid"], obj["direct"]);
+	    	recv_turn(obj["sid"], obj["direct"], obj["info"]);
 	    	break;
 	    case "sh":
 	    	recv_shot(obj["m_sid"], obj["sid"]);
@@ -36,22 +36,47 @@ s.onmessage = function(e) {
 	    	recv_destroy(obj["sid"]);
 	    	break;
 	    case "st":
-	    	recv_stop(obj["sid"], obj["x"], obj["y"]);
+	    	recv_stop(obj["sid"], obj["info"]);
 	    	break;
 	    case "req_init":
 	    	send_init();
-	    	Crafty.pause();
+	    	// Crafty.pause();
 	    	break;
 	    case "partner_ready":
 	    	recv_partner_ready();
-    		Crafty.pause();
+    		// Crafty.pause();
 	    	break;
 	    case "rsp_init":
 	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities']);
-	    	Crafty.pause();
+	    	// Crafty.pause();
 	    	send_partner_ready();
 	    	break;
 	}	
+}
+
+function get_entity_info(model) {
+    var info = {
+    	x: model.x,
+    	y: model.y,
+    	d: model.direct,
+    	r:  model.rotation,
+    }
+    return info;
+}
+
+function set_entity_info(model, info) {
+	model.attr(
+		{
+			x: info["x"],
+			y: info["y"],
+			direct: info["d"],
+			rotation: info["r"],
+		}
+	)
+	// model.x = info["x"];
+	// model.y = info["y"];
+	// model.direct = info["d"];
+	// model.rotation = info["r"];
 }
 
 
@@ -135,6 +160,7 @@ function rsp_init(stage_num, stage_info, map_distance, entities) {
 				{
 					x: info['pos'][0],
 					y: info['pos'][1],
+					direct: info['direct'],
 				}
 			);
 		}
@@ -178,15 +204,17 @@ function recv_tank_both(tank_name, pos, sid) {
 function send_turn(tank, direct) {
 	var json = {
 		c: 't',
-		direct: direct,
+		info: get_entity_info(tank),
 		sid: tank.sid,
+		direct: direct,
 	}
 	send(json);
 }
 
-function recv_turn(sid, direct) {
+function recv_turn(sid, direct, info) {
     var model = BOTHS[sid];
     if (model) {
+    	set_entity_info(model, info);
     	model.turn(direct);
     }
 }
@@ -234,17 +262,15 @@ function send_stop(tank) {
 	var json = {
 		c: 'st',
 		sid: tank.sid,
-		x: tank.x,
-		y: tank.y,
+		info: get_entity_info(tank),
 	}
 	send(json);
 }
 
-function recv_stop(sid, x, y) {
+function recv_stop(sid, info) {
 	Crafty.log(sid);
 	var tank = BOTHS[sid];
-	tank.x = x;
-	tank.y = y;
+	set_entity_info(tank, info);
 	tank.stop();
 }
 

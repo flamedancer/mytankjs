@@ -156,13 +156,15 @@ function Stage1() {
  			return false;
    		}
 	});
-
+	return stage;
 }
 
 
 function enter_stage(stage_num) {
 	Crafty.defineScene("stage1", function(attributes) {
-		cur_stage = new Stage1();
+		cur_stage = Stage1();
+		cur_stage.brain.set_state("begin");
+		cur_stage.begin();
 
 	});
 	Crafty.enterScene("stage1");

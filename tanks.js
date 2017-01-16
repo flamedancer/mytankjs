@@ -63,6 +63,16 @@ function MyTank(postion) {
 	tank.directs = [];
 	tank.direct = [0, -1];
 	tank.direct_id = DIRECTION_U;
+	tank.check_stop = function() {
+	    if (this.directs.length <= 0) {
+	   		stop(this);
+   		}
+   		else {
+   			this.direct_id = this.directs[this.directs.length - 1];
+   			turn(this, DIRECTIONS[this.direct_id]);
+   		}
+
+	}
 	tank.bind('KeyDown', function(e) {
 	    if(e.key == Crafty.keys.A) {
 	      	var direct = [-1, 0];
@@ -87,27 +97,24 @@ function MyTank(postion) {
 	      	this.drect_id = DIRECTION_D;
 	      	this.directs.push(this.drect_id);
 	      	turn(this, direct);
-
 	    } else if (e.key == Crafty.keys.J) {
 			shot(this);
 	    }
     }).bind('KeyUp', function(e) {
 	    if(e.key == Crafty.keys.A) {
-	      	this.directs.splice(this.directs.indexOf(DIRECTION_L), 1);      	
+	      	this.directs.splice(this.directs.indexOf(DIRECTION_L), 1);  
+	        this.check_stop();    	
 	    } else if (e.key == Crafty.keys.D) {
 	      	this.directs.splice(this.directs.indexOf(DIRECTION_R), 1);
+	        this.check_stop();
 	    } else if (e.key == Crafty.keys.W) {
 	      	this.directs.splice(this.directs.indexOf(DIRECTION_U), 1);
+	        this.check_stop();
 	    } else if (e.key == Crafty.keys.S) {
 	      	this.directs.splice(this.directs.indexOf(DIRECTION_D), 1);
+	        this.check_stop();
 	    }
-	    if (this.directs.length <= 0) {
-	   		stop(this);
-   		}
-   		else {
-   			this.direct_id = this.directs[this.directs.length - 1];
-   			turn(this, DIRECTIONS[this.direct_id]);
-   		}
+
     });
 	tank.bind('EnterFrame', function(){
 		if (this.y <= 340 && this.direct[1] < 0 && this.now_speed > 0) {
