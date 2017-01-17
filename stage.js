@@ -167,8 +167,6 @@ function enter_stage(stage_num) {
 		cur_stage = Stage1();
 		cur_stage.brain.set_state("begin");
 		cur_stage.begin();
-		cur_stage.brain.set_state("boss");
-
 	});
 	Crafty.enterScene("stage1");
 

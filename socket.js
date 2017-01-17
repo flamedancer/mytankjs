@@ -214,6 +214,8 @@ function send_turn(tank, direct) {
 }
 
 function recv_turn(sid, direct, info) {
+	if (!(sid in BOTHS))
+		return
     var model = BOTHS[sid];
     if (model) {
     	set_entity_info(model, info);
@@ -231,6 +233,8 @@ function send_shot(tank) {
 }
 
 function recv_shot(m_sid, sid) {
+	if (!(m_sid in BOTHS))
+		return
 	var owner = BOTHS[m_sid];
 	if (!(owner.bullet))
 		return;
@@ -275,6 +279,8 @@ function recv_stop(sid, map_distance, info) {
 		bgmap.map_distance = map_distance;
 		bgmap.fresh_bg();
 	}
+	if (!(sid in BOTHS))
+		return
 	var tank = BOTHS[sid];
 	set_entity_info(tank, info);
 	tank.stop();
