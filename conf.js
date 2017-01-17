@@ -1,6 +1,6 @@
 
 SCREEN_WIDTH = 384
-SCREEN_HEIGHT = 608
+SCREEN_HEIGHT = 576
 DIRECTIONS = [ [0, -1], [1, 0], [0, 1], [-1, 0] ];  // 上下左右
 DIRECTION_U = 0;
 DIRECTION_D = 2;
