@@ -192,26 +192,37 @@ function Tankstate_thinkdirect_bytarget(tank) {
 	this.name = "thinkdirect";
 	this.mold = tank;
 	this.do_actions = function() {
-        var target_pos = [this.mold.target.x, this.mold.target.y];
-        var self_pos = [this.mold.x, this.mold.y];
-        var path = [target_pos[0] - self_pos[0], target_pos[1] - self_pos[1]];
-        if (Math.abs(path[0]) > Math.abs(path[1])) {
-            var direct1 = [path[0] > 0 ? 1 : -1, 0];
-            var direct2 = [0, path[1] > 0  ? 1 : -1];
+		if (GAME_MODEL <= 2) {
+	        var target_pos = [this.mold.target.x, this.mold.target.y];
+	        var self_pos = [this.mold.x, this.mold.y];
+	        var path = [target_pos[0] - self_pos[0], target_pos[1] - self_pos[1]];
+	        if (Math.abs(path[0]) > Math.abs(path[1])) {
+	            var direct1 = [path[0] > 0 ? 1 : -1, 0];
+	            var direct2 = [0, path[1] > 0  ? 1 : -1];
+	        }
+	        else {
+	            var direct2 = [path[0] > 0 ? 1 : -1, 0];
+	            var direct1 = [0, path[1] > 0  ? 1 : -1];
+	        }
+	        var directs = [direct1, direct2];
+	        var first_chose = Math.random() > 0.5 ? 0 : 1;
+	    	x = this.mold.x + direct1[0] * this.mold.now_speed;
+	    	y = this.mold.y + direct1[1] * this.mold.now_speed;
+	    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) > 0)
+	    		var direct = directs[first_chose];
+	    	else
+	        	var direct = directs[1 - first_chose];
+	        turn(this.mold, direct);
         }
-        else {
-            var direct2 = [path[0] > 0 ? 1 : -1, 0];
-            var direct1 = [0, path[1] > 0  ? 1 : -1];
-        }
-        var directs = [direct1, direct2];
-        var first_chose = Math.random() > 0.5 ? 0 : 1;
-    	x = this.mold.x + direct1[0] * this.mold.now_speed;
-    	y = this.mold.y + direct1[1] * this.mold.now_speed;
-    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) > 0)
-    		var direct = directs[first_chose];
-    	else
-        	var direct = directs[1 - first_chose];
-        turn(this.model, direct);
+		else {
+	    	x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
+	    	y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
+	    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) == 0) {
+		    	this.mold.x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
+	    		this.mold.y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
+	    	}
+
+		}
 	};
 	this.check_conditions = function() {
 		return "move"
@@ -263,15 +274,19 @@ function Bossspider(postion) {
 	tank.brain = new StateMachine();
 	tank.brain.add_state(new Tankstate_both(tank));
 	tank.brain.add_state(new Tankstate_move(tank));
-	tank.brain.add_state(new Tankstate_turn(tank, true));
+	// tank.brain.add_state(new Tankstate_turn(tank, true));
 	tank.brain.add_state(new Tankstate_thinkdirect(tank));
 	tank.brain.add_state(new Tankstate_died(tank));
 	tank.both = null;
     tank.brain.set_state("both");
     tank.shot = function() {
         var pos = [this.x + Math.floor(this.w/2), this.y];
-        Terrorsmallspider(pos);
+        return Terrorsmallspider(pos);
     }
+    tank.turn = function(direct) {
+		this.direct = direct;
+		this.now_speed = this.speed;
+	}
     tank.bind('EnterFrame', function(){
 		tank.brain.think();
    	});
@@ -281,7 +296,7 @@ function Bossspider(postion) {
 
 function Terrorsmallspider(postion) {
 	var tank = Tank("Terrorsmallspider", postion);
-	tank.target = Crafty("mytank").get(0);
+	tank.target = Crafty("MyTank").get(0);
 	tank.shoting = 0;
 	tank.brain = new StateMachine();
 	tank.brain.add_state(new Tankstate_both(tank));

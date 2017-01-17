@@ -132,8 +132,8 @@ function Stage1() {
 				return
 			this.stage_begin = true;
 			bgmap.reset('111');
-			if (GAME_MODEL <= 2)
-				stage.mytank = both("MyTank", [88, 384]);
+
+			both("MyTank", [88, 384]);
  		},
  		servant : function() {
  			this.servant_over = (bgmap.map_over && Crafty("ai").length == 0);
@@ -149,7 +149,7 @@ function Stage1() {
    		boss: function() {
    			if (!(this.boss_both)) {
 	   			this.boss_both = true;
-				Bossspider([160, 30]);
+	   			both("Bossspider", [160, 30]);
 			}
    		},
    		startboss_over: function() {
@@ -167,6 +167,7 @@ function enter_stage(stage_num) {
 		cur_stage = Stage1();
 		cur_stage.brain.set_state("begin");
 		cur_stage.begin();
+		cur_stage.brain.set_state("boss");
 
 	});
 	Crafty.enterScene("stage1");
