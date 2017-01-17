@@ -36,7 +36,7 @@ s.onmessage = function(e) {
 	    	recv_destroy(obj["sid"]);
 	    	break;
 	    case "st":
-	    	recv_stop(obj["sid"], obj["info"]);
+	    	recv_stop(obj["sid"], obj["map_distance"], obj["info"]);
 	    	break;
 	    case "req_init":
 	    	send_init();
@@ -122,6 +122,7 @@ function send_init() {
 			direct: entity.direct,
 			name: entity.name,
 			type: type,
+			rotation: entity.rotation,
 		}
 		if (type == 'bullet')
 			entities[entity_mid]['m_sid'] = entity.owner.sid;
@@ -161,6 +162,7 @@ function rsp_init(stage_num, stage_info, map_distance, entities) {
 					x: info['pos'][0],
 					y: info['pos'][1],
 					direct: info['direct'],
+					rotation: info['rotation'],
 				}
 			);
 		}
@@ -262,13 +264,17 @@ function send_stop(tank) {
 	var json = {
 		c: 'st',
 		sid: tank.sid,
+		map_distance: bgmap.map_distance,
 		info: get_entity_info(tank),
 	}
 	send(json);
 }
 
-function recv_stop(sid, info) {
-	Crafty.log(sid);
+function recv_stop(sid, map_distance, info) {
+	if (bgmap.map_distance != map_distance) {
+		bgmap.map_distance = map_distance;
+		bgmap.fresh_bg();
+	}
 	var tank = BOTHS[sid];
 	set_entity_info(tank, info);
 	tank.stop();
