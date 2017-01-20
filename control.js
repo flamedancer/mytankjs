@@ -10,6 +10,7 @@ function both(tank_name, pos) {
 			tank(pos);
 			break;
 		case 2:
+		case 3:
 			send_tank_both(tank_name, pos);
 			break;
 	}

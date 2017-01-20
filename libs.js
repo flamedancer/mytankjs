@@ -72,7 +72,8 @@ function Bgmap() {
 				this.y += player.now_speed;
 			});
 			this.fresh_bg();
-			this.get_enemy();
+			if (GAME_MODEL != 3)
+			    this.get_enemy();
 		}
 		else
 			this.map_over = true;

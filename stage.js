@@ -132,8 +132,8 @@ function Stage1() {
 				return
 			this.stage_begin = true;
 			bgmap.reset('111');
-
-			both("MyTank", [88, 384]);
+			if (GAME_MODEL !== 3)
+			    both("MyTank", [88, 384]);
  		},
  		servant : function() {
  			this.servant_over = (bgmap.map_over && Crafty("ai").length == 0);

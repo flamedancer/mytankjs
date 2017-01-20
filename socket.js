@@ -7,7 +7,7 @@ if (GAME_MODEL == 2) {
 
 function get_id() {
 	id_seq += 1;
-	return id_seq;
+	return GAME_MODEL !=3 ? id_seq : -id_seq;
 }
 
 var s = new WebSocket("ws://192.168.1.105:9091/");
@@ -47,7 +47,7 @@ s.onmessage = function(e) {
     		// Crafty.pause();
 	    	break;
 	    case "rsp_init":
-	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities']);
+	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities'], obj['player_pos']);
 	    	// Crafty.pause();
 	    	send_partner_ready();
 	    	break;
