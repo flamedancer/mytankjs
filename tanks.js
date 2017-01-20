@@ -81,49 +81,52 @@ function MyTank(postion) {
    		}
 
 	}
-	tank.bind('KeyDown', function(e) {
-	    if(e.key == Crafty.keys.A) {
-	      	var direct = [-1, 0];
-	      	this.drect_id = DIRECTION_L;
-	      	this.directs.push(this.drect_id);
-	      	turn(this, direct);
-	      	
-	    } else if (e.key == Crafty.keys.D) {
-	      	var direct = [1, 0];
-	      	this.drect_id = DIRECTION_R;
-	      	this.directs.push(this.drect_id);
-	      	turn(this, direct);
+	if (!(player)) {
+		tank.bind('KeyDown', function(e) {
+		    if(e.key == Crafty.keys.A) {
+		      	var direct = [-1, 0];
+		      	this.drect_id = DIRECTION_L;
+		      	this.directs.push(this.drect_id);
+		      	turn(this, direct);
+		      	
+		    } else if (e.key == Crafty.keys.D) {
+		      	var direct = [1, 0];
+		      	this.drect_id = DIRECTION_R;
+		      	this.directs.push(this.drect_id);
+		      	turn(this, direct);
 
-	    } else if (e.key == Crafty.keys.W) {
-	      	var direct = [0, -1];
-	      	this.drect_id = DIRECTION_U;
-	      	this.directs.push(this.drect_id);
-	      	turn(this, direct);
+		    } else if (e.key == Crafty.keys.W) {
+		      	var direct = [0, -1];
+		      	this.drect_id = DIRECTION_U;
+		      	this.directs.push(this.drect_id);
+		      	turn(this, direct);
 
-	    } else if (e.key == Crafty.keys.S) {
-	      	var direct = [0, 1];
-	      	this.drect_id = DIRECTION_D;
-	      	this.directs.push(this.drect_id);
-	      	turn(this, direct);
-	    } else if (e.key == Crafty.keys.J) {
-			shot(this);
-	    }
-    }).bind('KeyUp', function(e) {
-	    if(e.key == Crafty.keys.A) {
-	      	this.directs.splice(this.directs.indexOf(DIRECTION_L), 1);  
-	        this.check_stop();    	
-	    } else if (e.key == Crafty.keys.D) {
-	      	this.directs.splice(this.directs.indexOf(DIRECTION_R), 1);
-	        this.check_stop();
-	    } else if (e.key == Crafty.keys.W) {
-	      	this.directs.splice(this.directs.indexOf(DIRECTION_U), 1);
-	        this.check_stop();
-	    } else if (e.key == Crafty.keys.S) {
-	      	this.directs.splice(this.directs.indexOf(DIRECTION_D), 1);
-	        this.check_stop();
-	    }
+		    } else if (e.key == Crafty.keys.S) {
+		      	var direct = [0, 1];
+		      	this.drect_id = DIRECTION_D;
+		      	this.directs.push(this.drect_id);
+		      	turn(this, direct);
+		    } else if (e.key == Crafty.keys.J) {
+				shot(this);
+		    }
+	    }).bind('KeyUp', function(e) {
+		    if(e.key == Crafty.keys.A) {
+		      	this.directs.splice(this.directs.indexOf(DIRECTION_L), 1);  
+		        this.check_stop();    	
+		    } else if (e.key == Crafty.keys.D) {
+		      	this.directs.splice(this.directs.indexOf(DIRECTION_R), 1);
+		        this.check_stop();
+		    } else if (e.key == Crafty.keys.W) {
+		      	this.directs.splice(this.directs.indexOf(DIRECTION_U), 1);
+		        this.check_stop();
+		    } else if (e.key == Crafty.keys.S) {
+		      	this.directs.splice(this.directs.indexOf(DIRECTION_D), 1);
+		        this.check_stop();
+		    }
 
-    });
+	    });
+	    player = tank;
+	}
 	tank.bind('EnterFrame', function(){
 		if (this.y <= 340 && this.direct[1] < 0 && this.now_speed > 0) {
 			bgmap.move_by_player(tank);

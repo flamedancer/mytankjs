@@ -150,7 +150,7 @@ function rsp_init(stage_num, stage_info, map_distance, entities, player_pos) {
 	for(var entity_mid in entities) {
 		var info = entities[entity_mid];
 		if (info['type'] == 'tank') {
-			recv_tank_both(info['name'], info['pos'], entity_mid);
+			recv_tank_both(info['name'], info['pos'], info['rotation'], entity_mid);
 		}
 	}
 
@@ -168,7 +168,7 @@ function rsp_init(stage_num, stage_info, map_distance, entities, player_pos) {
 			);
 		}
 	}
-	player = both("MyTank", player_pos);
+	both("MyTank", player_pos);
 }
 
 
@@ -203,9 +203,6 @@ function recv_tank_both(tank_name, pos, rotation, sid) {
 	tank.rotation = rotation;
 	BOTHS[sid] = tank;
 	tank.sid = sid;
-	if (!(player) && tank.name=='MyTank')
-		player = tank;
-
 }
 
 function send_turn(tank, direct) {
