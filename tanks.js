@@ -81,7 +81,7 @@ function MyTank(postion) {
    		}
 
 	}
-	if ((GAME_MODEL != 3 && (!player)) || (GAME_MODEL == 3 &&  (!player))) {
+	if ((GAME_MODEL != 3 && (!player)) || (GAME_MODEL == 3 &&  player)) {
 		tank.bind('KeyDown', function(e) {
 		    if(e.key == Crafty.keys.A) {
 		      	var direct = [-1, 0];
@@ -125,8 +125,8 @@ function MyTank(postion) {
 		    }
 
 	    });
-	    player = tank;
 	}
+	player = tank;
 	tank.bind('EnterFrame', function(){
 		if (this.y <= 340 && this.direct[1] < 0 && this.now_speed > 0) {
 			bgmap.move_by_player(tank);
