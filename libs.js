@@ -177,3 +177,70 @@ function Bossspider_both_Animation(x, y) {
    	return animation;
 
 }
+
+// function collision(model) {
+// 	if (!(model.name in CollISION_CONF))
+// 		return true;
+// 	var conf = CollISION_CONF[model.name];
+// 	var result = true;
+// 	Crafty("2D, Collision").each(function(index) {
+// 		if (this == model || (!(this.name in conf))) {
+// 			result = true;
+// 			return result;
+// 		}
+// 		if (conf[0] == 1) {
+// 			result = false;
+// 			return result;
+// 		}
+//     });
+//     return result;
+// }
+
+// function collision(hitData) {
+//  	if (!(this.name in COllISION_CONF))
+//  		return true;
+// 	var conf = COllISION_CONF[this.name];
+// 	var result = true;
+// 	for (var index in hitData) {
+// 		var obj = hitData[index]["obj"];
+// 		if (this == obj || (!(obj.name in conf))) {
+// 			result = true;
+// 			return result;
+// 		}
+// 		if (conf[obj.name][0] == 1) {
+// 			result = false;
+// 	    	this.x = this.x - this.direct[0] * this.now_speed;
+//     		this.y = this.y - this.direct[1] * this.now_speed;
+//     		this.stop();
+// 			return result;
+// 		}
+
+// 	}
+// }
+
+
+function set_collision(model) {
+ 	if (!(model.name in COllISION_CONF))
+ 		return;
+	var conf = COllISION_CONF[model.name];
+	var collision_types = Object.keys(conf).join(",");
+	model.checkHits(collision_types).bind("HitOn", function(hitData) {
+		var result = true;
+		for (var index in hitData) {
+			var obj = hitData[index]["obj"];
+            this.wounded(conf[obj.name][1]);
+            obj.wounded(conf[obj.name][2]);
+			if (conf[obj.name][0] == 1) {
+				result = false;
+		    	this.x = this.x - this.direct[0] * this.now_speed;
+	    		this.y = this.y - this.direct[1] * this.now_speed;
+	    		this.stop();
+				return result;
+			}
+
+		}
+		return result;
+
+	});
+
+}

@@ -50,14 +50,17 @@ function Bullet(name, owner) {
 	bullet.attr(conf);
 	bullet.origin("center");
 	bullet.attr({
-	  x: postion[0],
-	  y: postion[1],
-	  direct : owner.direct,
-	  rotation: owner.rotation,
-	  name: name,
-	  now_speed: now_speed,
-	  owner: owner,
-	  died: function() {
+		x: postion[0],
+		y: postion[1],
+		direct : owner.direct,
+		rotation: owner.rotation,
+		name: name,
+		now_speed: now_speed,
+		owner: owner,
+		wounded: function(value) {
+			this.died();
+		},
+		died: function() {
 			Explod(this.died_name, this);
 			destroy(this);
 		}
@@ -71,21 +74,7 @@ function Bullet(name, owner) {
     bullet.bind('EnterFrame', function(){
 		bullet.brain.think();		
    	});
-   	bullet.checkHits('tank') // check for collisions with entities that have the Solid component in each frame
-    .bind("HitOn", function(hitData) {
-    	for (var index in hitData) {
-    		var obj = hitData[index]["obj"];
-    		if (obj.name != this.owner.name) {
-    			obj.died();
-    			this.died();
-    		}
-
-    	}
-        // Crafty.log(hitData);
-    })
-    .bind("HitOff", function(comp) {
-        Crafty.log("Collision with Solid entity ended.");
-    });
+	set_collision(bullet);
 	return bullet;
 }
 

@@ -5,6 +5,7 @@ function Tank(name, postion) {
 	var name = name;
 	var rect = conf["rect"];
 	var speed = conf["speed"];
+	var hp = conf["maxhealth"];
 	var now_speed = speed;
 	
 	if (!(name in ENTITYS)) {
@@ -23,12 +24,18 @@ function Tank(name, postion) {
 		y: postion[1],
 		direct : [1, 0],
 		now_speed: now_speed,
+		hp: hp,
 		name: name,
 		shot: function() {
 			if (!(this.bullet))
 				return;
 			var bullet = eval(this.bullet)(this);
 			return bullet;
+		},
+		wounded: function(value) {
+			this.hp -= value;
+			if (this.hp <= 0)
+				this.died();
 		},
 		died: function() {
 			Explod(this.died_name, this);
@@ -52,6 +59,7 @@ function Tank(name, postion) {
 	})
 	if (tank["ai"] != false)
 		tank.addComponent("ai");
+	set_collision(tank);
 	return tank;
 }
 
@@ -120,14 +128,18 @@ function MyTank(postion) {
 		if (this.y <= 340 && this.direct[1] < 0 && this.now_speed > 0) {
 			bgmap.move_by_player(tank);
 		}
-    	x = this.x + this.direct[0] * this.now_speed;
-    	y = this.y + this.direct[1] * this.now_speed;
-    	if (bgmap.map_passive(x, y, this.w, this.h) == 0) {
-    		this.x = x;
-    		this.y = y;
+		var old_x = this.x;
+		var old_y = this.y;
+    	this.x = this.x + this.direct[0] * this.now_speed;
+    	this.y = this.y + this.direct[1] * this.now_speed;
+    	if (bgmap.map_passive(this.x, this.y, this.w, this.h)>0) {
+    		this.x = old_x;
+    		this.y = old_y;
     	}
 
    	});
+   	// set_collision(tank);
+        // Crafty.log(hitData);});
    return tank;
 }
 
@@ -192,7 +204,7 @@ function Tankstate_thinkdirect_bytarget(tank) {
 	this.name = "thinkdirect";
 	this.mold = tank;
 	this.do_actions = function() {
-		if (GAME_MODEL <= 2) {
+		if (GAME_MODEL <= 2 && this.mold.target) {
 	        var target_pos = [this.mold.target.x, this.mold.target.y];
 	        var self_pos = [this.mold.x, this.mold.y];
 	        var path = [target_pos[0] - self_pos[0], target_pos[1] - self_pos[1]];
@@ -264,6 +276,7 @@ function AiTank(postion) {
 		tank.brain.think();
 		
    	});
+   	// set_collision(tank);
    	return tank;
 }
 
