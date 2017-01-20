@@ -1,4 +1,5 @@
 GAME_MODEL = 2;   // 0 单机 1双人 2 联网主机  3 联网辅机
+player = null;
 
 
 function both(tank_name, pos) {
@@ -21,6 +22,7 @@ function turn(tank, direct) {
 			tank.turn(direct);
 			break;
 		case 2:
+		case 3:
 			send_turn(tank, direct);
 			break;
 	}

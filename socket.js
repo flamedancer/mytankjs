@@ -24,7 +24,7 @@ s.onmessage = function(e) {
     		recv_start(obj["game_model"]);
     		break;
 	    case "b":
-	    	recv_tank_both(obj["name"], obj["pos"], obj["sid"]);
+	    	recv_tank_both(obj["name"], obj["pos"], obj["rotation"], obj["sid"]);
 	    	break;
 	    case "t":
 	    	recv_turn(obj["sid"], obj["direct"], obj["info"]);
@@ -136,11 +136,12 @@ function send_init() {
 		map_distance: bgmap.map_distance,
 		stage_num: '1',
 		stage_info: stage_info,
+		player_pos: [player.x, player.y],
 	}
 	send(json);
 }
 
-function rsp_init(stage_num, stage_info, map_distance, entities) {
+function rsp_init(stage_num, stage_info, map_distance, entities, player_pos) {
 	enter_stage(stage_num);
 	// cur_stage.attr(stage_info);
 	bgmap.map_distance = map_distance;
@@ -167,10 +168,8 @@ function rsp_init(stage_num, stage_info, map_distance, entities) {
 			);
 		}
 	}
+	player = both("MyTank", player_pos);
 }
-
-
-
 
 
 function send_partner_ready() {
@@ -186,21 +185,27 @@ function recv_partner_ready() {
 
 
 
-function send_tank_both(tank_name, pos) {
+function send_tank_both(tank_name, pos, rotation) {
+	var rotation = rotation || 0;
 	var json = {
 		c: 'b',
 		type: 't',
 		name: tank_name,
 		pos: pos,
 		sid: get_id(),
+		rotation: rotation,
 	}
 	send(json);
 }
 
-function recv_tank_both(tank_name, pos, sid) {
+function recv_tank_both(tank_name, pos, rotation, sid) {
 	var tank = eval(tank_name)(pos);
+	tank.rotation = rotation;
 	BOTHS[sid] = tank;
 	tank.sid = sid;
+	if (!(player) && tank.name=='MyTank')
+		player = tank;
+
 }
 
 function send_turn(tank, direct) {

@@ -133,7 +133,7 @@ function Stage1() {
 			this.stage_begin = true;
 			bgmap.reset('111');
 
-			both("MyTank", [88, 384]);
+			player = both("MyTank", [88, 384]);
  		},
  		servant : function() {
  			this.servant_over = (bgmap.map_over && Crafty("ai").length == 0);
