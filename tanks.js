@@ -81,7 +81,7 @@ function MyTank(postion) {
    		}
 
 	}
-	if ((GAME_MODEL != 3 && (!player)) || (GAME_MODEL == 3 && player)) {
+	if ((GAME_MODEL != 3 && (!player)) || (GAME_MODEL == 3 &&  (!player))) {
 		tank.bind('KeyDown', function(e) {
 		    if(e.key == Crafty.keys.A) {
 		      	var direct = [-1, 0];
