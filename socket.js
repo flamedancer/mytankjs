@@ -278,7 +278,7 @@ function recv_stop(sid, map_distance, info) {
 	 	
 	 	// 补偿y洲偏移
 	 	Crafty.e("2D, DOM, Collision").each(function(index) {
-	 		this.y += (map_distance - bgmap.map_distance);
+	 		this.y += (bgmap.map_distance - map_distance);
 	 	});
 	 	bgmap.map_distance = map_distance;
 	 	bgmap.fresh_bg();
