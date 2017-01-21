@@ -84,7 +84,7 @@ function MyTank(postion) {
    		}
 
 	}
-	if ((GAME_MODEL != 3 && (!player)) || (GAME_MODEL == 3 &&  player)) {
+	if ((CONTROL && (!player)) || (!CONTROL &&  player)) {
 		tank.bind('KeyDown', function(e) {
 		    if(e.key == Crafty.keys.A) {
 		      	var direct = [-1, 0];
@@ -185,14 +185,14 @@ function Tankstate_move(tank) {
 	this.name = "move";
 	this.mold = tank;
 	this.do_actions = function() {
-		if (GAME_MODEL <= 2) {
+		if (CONTROL) {
 			if (Math.random() <= this.mold.shot_rate)
 				shot(this.mold);
 		}
 	};
 	this.check_conditions = function() {
 
-		if (GAME_MODEL <= 2) {
+		if (CONTROL) {
 			if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
 	    		return this.mold.died();
 	    	x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
@@ -234,7 +234,7 @@ function Tankstate_thinkdirect_bytarget(tank) {
 	this.name = "thinkdirect";
 	this.mold = tank;
 	this.do_actions = function() {
-		if (GAME_MODEL <= 2 && this.mold.target) {
+		if (CONTROL && this.mold.target) {
 	        var target_pos = [this.mold.target.x, this.mold.target.y];
 	        var self_pos = [this.mold.x, this.mold.y];
 	        var path = [target_pos[0] - self_pos[0], target_pos[1] - self_pos[1]];

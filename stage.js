@@ -132,7 +132,7 @@ function Stage1() {
 				return
 			this.stage_begin = true;
 			bgmap.reset('111');
-			if (GAME_MODEL !== 3)
+			if (CONTROL)
 			    both("MyTank", [88, 384]);
  		},
  		servant : function() {
@@ -149,7 +149,7 @@ function Stage1() {
    		boss: function() {
    			if (!(this.boss_both)) {
 	   			this.boss_both = true;
-	   			if (GAME_MODEL !== 3)
+	   			if (CONTROL)
 	   				both("Bossspider", [160, 30]);
 			}
    		},

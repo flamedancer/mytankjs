@@ -8,7 +8,7 @@ if (GAME_MODEL == 2) {
 
 function get_id() {
 	id_seq += 1;
-	return GAME_MODEL !=3 ? id_seq : -id_seq;
+	return id_seq * SID_FLAG;
 }
 
 var s = new WebSocket("ws://192.168.1.110:9091/");
@@ -25,7 +25,7 @@ s.onmessage = function(e) {
     var cmd = obj.c;
     switch (cmd) {
     	case "s":
-    		recv_start(obj["game_model"]);
+    		recv_start(obj["is_control"]);
     		break;
 	    case "b":
 	    	recv_tank_both(obj["name"], obj["pos"], obj["rotation"], obj["sid"]);
@@ -53,7 +53,7 @@ s.onmessage = function(e) {
     		Crafty.pause();
 	    	break;
 	    case "rsp_init":
-	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities'], obj['player_pos']);
+	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities'], obj['player_pos'], obj['partner_id_flag']);
 	    	Crafty.pause();
 	    	send_partner_ready();
 	    	break;
@@ -102,13 +102,14 @@ function send_start() {
 	send(json);
 }
 
-function recv_start(gmodel) {
-	GAME_MODEL = gmodel;
-	if (GAME_MODEL == 3) {
-		req_init();
+function recv_start(is_control) {
+    CONTROL = is_control
+	if (CONTROL) {
+        enter_stage("1");
     }
-	else
-		enter_stage("1");
+	else {
+        req_init();	
+    }
 }
 
 function req_init() {
@@ -147,11 +148,12 @@ function send_init() {
 		stage_num: '1',
 		stage_info: stage_info,
 		player_pos: [player.x, player.y],
+        partner_id_flag: SID_FLAG * -1,
 	}
 	send(json);
 }
 
-function rsp_init(stage_num, stage_info, map_distance, entities, player_pos) {
+function rsp_init(stage_num, stage_info, map_distance, entities, player_pos, id_flag) {
 	enter_stage(stage_num);
 	// cur_stage.attr(stage_info);
 	bgmap.map_distance = map_distance;
@@ -178,6 +180,7 @@ function rsp_init(stage_num, stage_info, map_distance, entities, player_pos) {
 			);
 		}
 	}
+    ID_FLAG = id_flag;
 	both("MyTank", player_pos);
 }
 
@@ -288,9 +291,12 @@ function recv_stop(sid, map_distance, info) {
 	 	
 	 	// 补偿y洲偏移
 	 	Crafty.pause();
-	 	Crafty.e("2D, DOM, Collision").each(function(index) {
-	 		this.y += (bgmap.map_distance - map_distance);
-	 	});
+	 	// Crafty.e("2D, DOM, Collision").each(function(index) {
+	 	// 	this.y += (bgmap.map_distance - map_distance);
+	 	// });
+        for (var sid in BOTHS) {
+            BOTHS[sid].y += (bgmap.map_distance - map_distance);
+        }
 	 	bgmap.map_distance = map_distance;
 	 	bgmap.fresh_bg();
 	 	Crafty.pause();
@@ -304,11 +310,17 @@ function recv_stop(sid, map_distance, info) {
 
 
 function get_control() {
-    GAME_MODEL = 2;
-    Crafty.e("MyTank").each(function(index) {
-        if (this != player)
-            this.died();
-    });
+    // Crafty.e("MyTank").each(function(index) {
+    //     if (this != player)
+    //         this.destroy() ;
+    // });
+    for (var sid in BOTHS) {
+        if ((BOTHS[sid].name == "MyTank") && BOTHS[sid] != player) {
+            BOTHS[sid].died();
+            delete BOTHS[sid];
+        }
+    }
+    CONTROL = true;
 }
 
 
