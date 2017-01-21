@@ -15,6 +15,9 @@ s.onopen = function() {
 //alert("connected !!!");
     send_start();  // begin  command
 };
+s.onclose = function() {
+    send_died(player); 
+};
 
 s.onmessage = function(e) {
     var obj = eval("(" + e.data + ")");
@@ -44,7 +47,7 @@ s.onmessage = function(e) {
 	    	break;
 	    case "partner_ready":
 	    	recv_partner_ready();
-    		// Crafty.pause();
+    		Crafty.pause();
 	    	break;
 	    case "rsp_init":
 	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities'], obj['player_pos']);
