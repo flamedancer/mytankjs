@@ -1,5 +1,6 @@
  // s start   b both   t turn   sh shot   d destroy   st stop
  // req_init  要求返回当前所有entity信息,并暂停游戏 partner_ready 同伴准备好了继续游戏
+ // control 获得控制权
 id_seq = 1000;
 BOTHS = {};
 
@@ -10,7 +11,7 @@ function get_id() {
 	return GAME_MODEL !=3 ? id_seq : -id_seq;
 }
 
-var s = new WebSocket("ws://192.168.1.105:9091/");
+var s = new WebSocket("ws://192.168.1.110:9091/");
 s.onopen = function() {
 //alert("connected !!!");
     send_start();  // begin  command
@@ -56,6 +57,9 @@ s.onmessage = function(e) {
 	    	Crafty.pause();
 	    	send_partner_ready();
 	    	break;
+        case "control":
+            get_control();
+            break;
 	}	
 }
 
@@ -297,6 +301,30 @@ function recv_stop(sid, map_distance, info) {
 	set_entity_info(tank, info);
 	tank.stop();
 }
+
+
+function get_control() {
+    GAME_MODEL = 2;
+    Crafty.e("MyTank").each(function(index) {
+        if (this != player)
+            this.died();
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
