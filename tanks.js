@@ -84,7 +84,7 @@ function MyTank(postion) {
    		}
 
 	}
-	if ((CONTROL && (!player)) || (!CONTROL &&  player)) {
+	if ((CONTROL && (!player)) || (!CONTROL && player)) {
 		tank.bind('KeyDown', function(e) {
 		    if(e.key == Crafty.keys.A) {
 		      	var direct = [-1, 0];
@@ -150,7 +150,8 @@ function MyTank(postion) {
 
 	    });
 	}
-	player = tank;
+	if (!(CONTROL && player))
+		player = tank;
 	tank.bind('EnterFrame', function(){
 		if (this.y <= 340 && this.direct[1] < 0 && this.now_speed > 0) {
 			bgmap.move_by_player(tank);

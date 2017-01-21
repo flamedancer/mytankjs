@@ -180,7 +180,7 @@ function rsp_init(stage_num, stage_info, map_distance, entities, player_pos, id_
 			);
 		}
 	}
-    ID_FLAG = id_flag;
+    SID_FLAG = id_flag;
 	both("MyTank", player_pos);
 }
 

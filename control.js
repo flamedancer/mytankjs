@@ -1,4 +1,4 @@
-GAME_MODEL = 0;   // 0 单机 1双人 2 联网
+GAME_MODEL = 2;   // 0 单机 1双人 2 联网
 player = null;
 CONTROL = true; // 控制权
 SID_FLAG = 1;  // sid 符号位
