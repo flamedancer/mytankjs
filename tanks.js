@@ -4,7 +4,7 @@ function Tank(name, postion) {
 	var picture = conf["img"];
 	var name = name;
 	var rect = conf["rect"];
-	var speed = conf["speed"];
+	var speed = Array.isArray(conf["speed"]) ? range_choice(conf["speed"]): conf["speed"];
 	var hp = conf["maxhealth"];
 	var now_speed = speed;
 	
@@ -23,6 +23,7 @@ function Tank(name, postion) {
 		x: postion[0],
 		y: postion[1],
 		direct : [1, 0],
+		speed: speed,
 		now_speed: now_speed,
 		hp: hp,
 		name: name,
@@ -67,6 +68,8 @@ function Tank(name, postion) {
 function MyTank(postion) {
 	
 	var tank = Tank("MyTank", postion);
+	tank.shot_interval = 12;
+	tank.now_shot_interval = tank.shot_interval;
 	tank.now_speed = 0;
 	tank.directs = [];
 	tank.direct = [0, -1];
@@ -107,7 +110,12 @@ function MyTank(postion) {
 		      	this.directs.push(this.drect_id);
 		      	turn(this, direct);
 		    } else if (e.key == Crafty.keys.J) {
-				shot(this);
+		    	if (this.now_shot_interval <= 0) {
+		    		shot(this);
+		    		this.now_shot_interval = this.shot_interval;
+		    	}
+
+				
 		    }
 	    }).bind('KeyUp', function(e) {
 		    if(e.key == Crafty.keys.A) {
@@ -139,6 +147,8 @@ function MyTank(postion) {
     		this.x = old_x;
     		this.y = old_y;
     	}
+
+    	this.now_shot_interval--;
 
    	});
    	// set_collision(tank);

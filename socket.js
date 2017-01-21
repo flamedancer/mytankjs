@@ -277,11 +277,13 @@ function recv_stop(sid, map_distance, info) {
 	 if (bgmap.map_distance != map_distance) {
 	 	
 	 	// 补偿y洲偏移
+	 	Crafty.pause();
 	 	Crafty.e("2D, DOM, Collision").each(function(index) {
 	 		this.y += (bgmap.map_distance - map_distance);
 	 	});
 	 	bgmap.map_distance = map_distance;
 	 	bgmap.fresh_bg();
+	 	Crafty.pause();
 	}
 	if (!(sid in BOTHS))
 		return

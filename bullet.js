@@ -33,7 +33,7 @@ function Bullet(name, owner) {
 	var picture = conf["img"];
 	var name = name;
 	var rect = conf["rect"];
-	var speed = conf["speed"];
+	var speed = Array.isArray(conf["speed"]) ? range_choice(conf["speed"]): conf["speed"];
 	var now_speed = speed;
 	if (!(name in ENTITYS)) {
 		var obj = {};
@@ -52,6 +52,7 @@ function Bullet(name, owner) {
 	bullet.attr({
 		x: postion[0],
 		y: postion[1],
+		speed: speed,
 		direct : owner.direct,
 		rotation: owner.rotation,
 		name: name,

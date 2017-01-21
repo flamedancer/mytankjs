@@ -149,7 +149,8 @@ function Stage1() {
    		boss: function() {
    			if (!(this.boss_both)) {
 	   			this.boss_both = true;
-	   			both("Bossspider", [160, 30]);
+	   			if (GAME_MODEL !== 3)
+	   				both("Bossspider", [160, 30]);
 			}
    		},
    		startboss_over: function() {

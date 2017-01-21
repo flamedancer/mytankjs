@@ -8,16 +8,24 @@ all_players = []
 
 rooms = {}  # room_id: [p1, p2]
 
-def get_game_model(player):
+def add_room_member(players, player):
+	origin_player = players[0]
+	players.append(player)
+	origin_player.partner = player
+	player.partner = origin_player
+	player.room_id = origin_player.room_id
+
+def get_game_model(player, room_id):
+	if room_id and room_id in rooms and len(rooms[room_id]) == 1:
+		add_room_member(rooms[room_id], player)
+		return 3
 	for room_id, players in rooms.items():
 		if len(players) == 1:
-			origin_player = players[0]
-			players.append(player)
-			origin_player.partner = player
-			player.partner = origin_player
+			add_room_member(players, player)
 			return 3
 	else:
 		new_room_id = player.core_id
+		player.room_id = new_room_id
 		rooms[new_room_id] = [player]
 		return 2
 
@@ -26,6 +34,7 @@ class Player(object):
 	def __init__(self, wc, core_id):
 		self.wc = wc
 		self.core_id = core_id
+		self.room_id = ''
 		self.partner = None
 
 	def send_self(self, info):
@@ -46,7 +55,7 @@ class Player(object):
 		info = json.loads(msg)
 		if info['c'] == 's':
 			# info['uuid'] = self.core_id
-			game_model = get_game_model(self)
+			game_model = get_game_model(self, info.get('room_id'))
 			info['game_model'] = game_model
 			self.send_self(info)
 		elif info['c'] == 'req_init':
@@ -62,12 +71,21 @@ def app(environ, start_response):
     core_id = 11 #str(environ['HTTP_SEC_WEBSOCKET_KEY'])
     player = Player(ws, core_id)
     all_players.append(player)
+    print "connect: ", player.core_id
     try: 
         while True:
 	        msg = ws.receive()
 	        player.handler(msg)
-    except geventwebsocket.WebSocketError, ex:
-        print "player left: ", player.core_id
+    # except geventwebsocket.WebSocketError, ex:
+    #     print "player left: ", player.core_id
+    except:
+        disconnect_player(player)
+
+
+def disconnect_player(player):
+	rooms[playr.room_id].remove(player)
+	all_players.remove(player)
+	print "disconnect: ", player.core_id
 
 
 
