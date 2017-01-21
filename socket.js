@@ -100,7 +100,6 @@ function recv_start(gmodel) {
 	GAME_MODEL = gmodel;
 	if (GAME_MODEL == 3) {
 		req_init();
-        Crafty.pause();
     }
 	else
 		enter_stage("1");
