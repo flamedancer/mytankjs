@@ -91,7 +91,7 @@ function Bgmap() {
        	point_y_range = [Math.floor((top + this.map_distance) / this.bitmap_point_height), Math.floor((this.map_distance + bottom) / this.bitmap_point_height)];
        	for (var point_x=point_x_range[0]; point_x <= point_x_range[1]; point_x++) {
 			for (var point_y=point_y_range[0]; point_y <= point_y_range[1]; point_y++) {
-				if (this.bitmap[point_y][point_x] != 0)
+				if (this.bitmap[point_y][point_x] == 1)
 					return 2;
 			}
        	}

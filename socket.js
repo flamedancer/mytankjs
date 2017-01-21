@@ -33,7 +33,7 @@ s.onmessage = function(e) {
 	    	recv_shot(obj["m_sid"], obj["sid"]);
 	    	break;
 	    case "d":
-	    	recv_destroy(obj["sid"]);
+	    	recv_died(obj["sid"]);
 	    	break;
 	    case "st":
 	    	recv_stop(obj["sid"], obj["map_distance"], obj["info"]);
@@ -246,7 +246,7 @@ function recv_shot(m_sid, sid) {
 }
 
 
-function send_destroy(tank) {
+function send_died(tank) {
 	var json = {
 		c: 'd',
 		sid: tank.sid,
@@ -254,15 +254,12 @@ function send_destroy(tank) {
 	send(json);
 }
 
-function recv_destroy(sid) {
+function recv_died(sid) {
 	if (!(sid in BOTHS))
 		return
-	var owner = BOTHS[sid];
-	if (owner) {
-		owner.destroy();
-		delete BOTHS[sid];
-	}
-
+	var model = BOTHS[sid];
+	model.died();
+	delete BOTHS[sid];
 }
 
 

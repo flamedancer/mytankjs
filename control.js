@@ -36,20 +36,21 @@ function shot(tank) {
 			tank.shot();
 			break;
 		case 2:
+		case 3:
 			send_shot(tank);
 			break;
 	}
 }
 
 
-function destroy(tank) {
+function died(tank) {
 	switch (GAME_MODEL) {
 		case 0:
 		case 1:
-			tank.destroy();
+			tank.died();
 			break;
 		case 2:
-			send_destroy(tank);
+			send_died(tank);
 			break;
 	}
 }
@@ -61,6 +62,7 @@ function stop(tank) {
 			tank.stop();
 			break;
 		case 2:
+		case 3:
 			send_stop(tank);
 			break;
 	}

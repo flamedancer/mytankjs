@@ -35,11 +35,11 @@ function Tank(name, postion) {
 		wounded: function(value) {
 			this.hp -= value;
 			if (this.hp <= 0)
-				this.died();
+				died(this);
 		},
 		died: function() {
 			Explod(this.died_name, this);
-			destroy(this);
+			this.destroy();
 		},
 		stop: function() {
 			this.now_speed = 0;
@@ -165,9 +165,9 @@ function Tankstate_move(tank) {
 		}
 	};
 	this.check_conditions = function() {
+		if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
+	    	return this.mold.died();
 		if (GAME_MODEL <= 2) {
-	    	if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
-	    		return this.mold.died();
 	    	x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
 	    	y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
 	    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) > 0)
