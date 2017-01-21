@@ -83,7 +83,7 @@ def app(environ, start_response):
 
 
 def disconnect_player(player):
-	rooms[player.room_id].remove(player)
+    rooms[player.room_id].remove(player)
     if not rooms[player.room_id]:
         del rooms[player.room_id]
 	all_players.remove(player)
