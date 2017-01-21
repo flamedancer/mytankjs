@@ -89,25 +89,41 @@ function MyTank(postion) {
 		    if(e.key == Crafty.keys.A) {
 		      	var direct = [-1, 0];
 		      	this.drect_id = DIRECTION_L;
+		      	var before_index = this.directs.indexOf(this.drect_id);
 		      	this.directs.push(this.drect_id);
+		      	if (before_index >= 0)
+	      			this.directs.splice(before_index, 1);
+		      	
 		      	turn(this, direct);
 		      	
 		    } else if (e.key == Crafty.keys.D) {
 		      	var direct = [1, 0];
 		      	this.drect_id = DIRECTION_R;
+		      	var before_index = this.directs.indexOf(this.drect_id);
 		      	this.directs.push(this.drect_id);
+		      	if (before_index >= 0)
+	      			this.directs.splice(before_index, 1);
+		      	
 		      	turn(this, direct);
 
 		    } else if (e.key == Crafty.keys.W) {
 		      	var direct = [0, -1];
 		      	this.drect_id = DIRECTION_U;
+		      	var before_index = this.directs.indexOf(this.drect_id);
 		      	this.directs.push(this.drect_id);
+		      	if (before_index >= 0)
+	      			this.directs.splice(before_index, 1);
+		      	
 		      	turn(this, direct);
 
 		    } else if (e.key == Crafty.keys.S) {
 		      	var direct = [0, 1];
 		      	this.drect_id = DIRECTION_D;
+		      	var before_index = this.directs.indexOf(this.drect_id);
 		      	this.directs.push(this.drect_id);
+		      	if (before_index >= 0)
+	      			this.directs.splice(before_index, 1);
+		      	
 		      	turn(this, direct);
 		    } else if (e.key == Crafty.keys.J) {
 		    	if (this.now_shot_interval <= 0) {
@@ -175,9 +191,10 @@ function Tankstate_move(tank) {
 		}
 	};
 	this.check_conditions = function() {
-		if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
-	    	return this.mold.died();
+
 		if (GAME_MODEL <= 2) {
+			if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
+	    		return this.mold.died();
 	    	x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
 	    	y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
 	    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) > 0)
