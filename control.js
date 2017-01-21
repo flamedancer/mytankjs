@@ -50,6 +50,7 @@ function died(tank) {
 			tank.died();
 			break;
 		case 2:
+        case 3:
 			send_died(tank);
 			break;
 	}

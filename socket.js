@@ -40,7 +40,7 @@ s.onmessage = function(e) {
 	    	break;
 	    case "req_init":
 	    	send_init();
-	    	// Crafty.pause();
+	    	Crafty.pause();
 	    	break;
 	    case "partner_ready":
 	    	recv_partner_ready();
@@ -48,7 +48,7 @@ s.onmessage = function(e) {
 	    	break;
 	    case "rsp_init":
 	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities'], obj['player_pos']);
-	    	// Crafty.pause();
+	    	Crafty.pause();
 	    	send_partner_ready();
 	    	break;
 	}	
@@ -95,8 +95,10 @@ function send_start() {
 
 function recv_start(gmodel) {
 	GAME_MODEL = gmodel;
-	if (GAME_MODEL == 3)
+	if (GAME_MODEL == 3) {
 		req_init();
+        Crafty.pause();
+    }
 	else
 		enter_stage("1");
 }

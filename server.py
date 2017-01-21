@@ -72,7 +72,7 @@ def app(environ, start_response):
     player = Player(ws, core_id)
     all_players.append(player)
     print "connect: ", player.core_id
-    try: 
+    try:
         while True:
 	        msg = ws.receive()
 	        player.handler(msg)
@@ -83,7 +83,9 @@ def app(environ, start_response):
 
 
 def disconnect_player(player):
-	rooms[playr.room_id].remove(player)
+	rooms[player.room_id].remove(player)
+    if not rooms[player.room_id]:
+        del rooms[player.room_id]
 	all_players.remove(player)
 	print "disconnect: ", player.core_id
 
