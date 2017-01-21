@@ -43,6 +43,8 @@ s.onmessage = function(e) {
 	    	break;
 	    case "req_init":
 	    	send_init();
+            player.directs = [];
+            player.stop();
 	    	Crafty.pause();
 	    	break;
 	    case "partner_ready":
