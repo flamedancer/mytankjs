@@ -66,7 +66,10 @@ function stop(tank) {
 	}
 }
 
-function start_game() {
+function start_game(game_model, room_id) {
+    GAME_MODEL = game_model;
 	if (GAME_MODEL <= 1)
 		enter_stage("1");
+    else
+        init_s(room_id);
 }

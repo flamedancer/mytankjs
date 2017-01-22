@@ -3,27 +3,50 @@
  // control 获得控制权
 id_seq = 1000;
 BOTHS = {};
+s = null;
+D = new Date();
 
-if (GAME_MODEL == 2) {
 
 function get_id() {
 	id_seq += 1;
 	return id_seq * SID_FLAG;
 }
 
-var s = new WebSocket("ws://192.168.1.110:9091/");
+function init_s(room_id) {
+    send_start(room_id);  // begin  command
+}
+// var s = new WebSocket("ws://192.168.1.110:9091/");
+
+
+s = new WebSocket("ws://192.168.1.105:9091/");
 s.onopen = function() {
 //alert("connected !!!");
-    send_start();  // begin  command
+    
 };
 s.onclose = function() {
     send_died(player); 
 };
 
+
+setInterval(s_ping, 5000);
+
+
+
 s.onmessage = function(e) {
+    if (e.data == "pong") {
+        var now_D = new Date();
+        var ping_value = now_D.getTime() - D.getTime()
+        report_ping(ping_value);
+        show_self_ping(ping_value);
+        return;
+    }
+
     var obj = eval("(" + e.data + ")");
     var cmd = obj.c;
     switch (cmd) {
+        case "reset_room":
+            reset_room(obj["room_index"], obj["type"], obj["value"]);
+            break;
     	case "s":
     		recv_start(obj["is_control"]);
     		break;
@@ -63,6 +86,9 @@ s.onmessage = function(e) {
 	}	
 }
 
+
+
+
 function get_entity_info(model) {
     var info = {
     	x: model.x,
@@ -94,10 +120,24 @@ function send(obj) {
 	s.send(msg); 
 }
 
+function s_ping() {
+    D = new Date();
+    s.send("ping");
+}
 
-function send_start() {
+function report_ping(ping_value) {
+    var json = {
+        c: 'ping',
+        ping: ping_value,
+    }
+    send(json);
+}
+
+
+function send_start(room_id) {
 	var json = {
 		c: 's',
+        room_id: room_id,
 	}
 	send(json);
 }
@@ -326,17 +366,3 @@ function get_control() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-}

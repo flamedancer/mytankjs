@@ -1,19 +1,73 @@
 
 
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <title>JS Bin</title>
+  <meta name="viewport" charset="utf-8" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>魔力坦克</title>
 </head>
 <body>
-<div id="game"></div>
+<div class="row container-fluid" >
+    <div class="col-md-4 room" id="romm_table">
+        <div class="row" id='title'>
+        《魔力坦克ONLINE》
+        </div>
+        <div class="row">
+        	<div class="col-md-4 room" onclick="join(0);">
+                 单机练习
+            </div>
+        	<div class="col-md-4 room" onclick="join(2, '');">
+                新建房间
+            </div>
+        	<div class="col-md-4 room">
+                Ping:<span class="label label-default" id="self_ping">35</span>ms
+            </div>
+        </div>
+		<div class="row">
+			<div class="col-md-12 room">
+			    <div class="row">
+			      <div class="col-md-3 room">
+			        房间号
+			      </div>
+			      <div class="col-md-3 room">
+			        玩家数
+			      </div>
+			      <div class="col-md-3 room">
+			        ping
+			      </div>
+			      <div class="col-md-3 room" onclick="join(2)">
+			       快速加入
+			      </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+    <div class="col-md-5">
+		<div id="game"></div>
+	</div>
+    <div class="col-md-3">
+  		.col-md-1
+    </div>
+</div>
+
 </body>
 <style> 
-body{ text-align:center} 
-#game{ margin:0 auto; border:1px solid #F00} 
+/*body{ text-align:center} */
+.button_span {width: 100%;}
+#romm_table {margin-top:5%;}
+#game{ margin:0 auto; border:1px solid #F00;} 
+.room{ margin:0 auto; border:1px solid #0000CD;text-align:center;}
 /* css注释：为了观察效果设置宽度 边框 高度等样式 */ 
-</style> 
+</style>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/craftyjs/Crafty/testing/dist/crafty-min.js"></script>
 <script type="text/javascript" src="conf.js"></script>
 <script type="text/javascript" src="tool.js"></script>
@@ -24,57 +78,63 @@ body{ text-align:center}
 <script type="text/javascript" src="stage.js"></script>
 <script type="text/javascript" src="bullet.js"></script>
 <script type="text/javascript" src="tanks.js"></script>
+<script type="text/javascript">
+    function show_self_ping(ping_value) {
+    	$("#self_ping").html(ping_value);
+    }
 
+    function addRoom(room_id, room_index) {
+	    var txt1=$("<div></div>");            // 以 HTML 创建新元素
+	    var txt2=$("<div></div>");  // 以 jQuery 创建新元素
+	    var txt3=$("<div></div>");  // 以 DOM 创建新元素
+	    var txt4=$("<div></div>");
+	    var row=$("<div></div>");
+	    row.attr("class", "row");
+	    row.attr("room_index", room_index);
+	    txt1.attr("class", "col-md-3 room");
+	    txt2.attr("class", "col-md-3 room");
+	    txt3.attr("class", "col-md-3 room");
+	    txt4.attr("class", "col-md-3 room");
+	    txt4.attr("onclick", "join(" + room_id + ")");
+	    txt1.html("1");
+	    txt2.html("1/2");
+	    txt3.html("12ms");
+	    txt4.html("加入");
+	    row.append(txt1,txt2,txt3,txt4); 
+	    $("#romm_table").append(row);
+	    $("p").append(txt1,txt2,txt3);        // 追加新元素
+    }
+
+    function delRoom(room_index) {
+    	$("[room_index='"+ room_index +"']").remove();
+    }
+
+    function reset_room(room_index, type, value) {
+    	if (type == "num") {
+    		if (value == 1)
+    			$("[room_index='"+ room_index +"']:eq(3)").html("加入");
+    		else
+    			$("[room_index='"+ room_index +"']:eq(3)").html("");
+    	    $("[room_index='"+ room_index +"']:eq(1)").html(value.toString()+"/2");
+    	}
+    	else if (type == "ping")
+    	    $("[room_index='"+ room_index +"']:eq(2)").html(value.toString()+"ms");
+    	else if (type == "del")
+    		delRoom(room_index);
+    	else if (type == "add")
+    		addRoom(value, room_index);
+    }
+
+    function join(game_model, room_id) {
+    	start_game(game_model, room_id);
+    }
+
+
+</script>
 <script type="text/javascript">
 	
 	Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT, document.getElementById('game'));
-	// Crafty.sprite("ai_icetank1.gif", {flower:[0,0,30,30]});
-	// var flower_entity = Crafty.e("2D, DOM, flower");
-	// flower_entity.origin("center");
-	// flower_entity.attr({
-	// 	  x: 100,
-	// 	  y: 100,
-	// 	  direct : [0, 0],
-	// 	  downskeycnt : 0,
-
-	// }).bind('KeyDown', function(e) {
-	//     if(e.key == Crafty.keys.A) {
-	//       	this.direct = [-1, 0];
-	//       	this.rotation = -90;
-	//       	this.downskeycnt += 1;
-	//     } else if (e.key == Crafty.keys.D) {
-	//       	this.direct = [1, 0];
-	//       	this.rotation = 90;
-	//       	this.downskeycnt += 1;
-	//     } else if (e.key == Crafty.keys.W) {
-	//       	this.direct = [0, -1];
-	//      	this.rotation = 0;
-	//      	this.downskeycnt += 1;
-	//     } else if (e.key == Crafty.keys.S) {
-	//       	this.direct = [0, 1];
-	//       	this.rotation = 180;
-	//       	this.downskeycnt += 1;
-	//     }
- //    }).bind('KeyUp', function(e) {
-	//     if(e.key == Crafty.keys.A) {
-	//       	this.downskeycnt -= 1;
-	//     } else if (e.key == Crafty.keys.D) {
-	//       	this.downskeycnt -= 1;
-	//     } else if (e.key == Crafty.keys.W) {
-	//       	this.downskeycnt -= 1;
-	//     } else if (e.key == Crafty.keys.S) {
-	//       	this.downskeycnt -= 1;
-	//     }
-	//     if (this.downskeycnt <= 0) {
-	//    		this.direct = [0, 0];
-	//    		this.downskeycnt = 0;
- //   		}
- //    });
- //    flower_entity.bind('EnterFrame', function(){
- //    	this.x = this.x + this.direct[0];
- //    	this.y = this.y + this.direct[1];
- //   	});
- 	start_game();
+ 	
 
 </script>
 </html>
