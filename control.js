@@ -2,6 +2,7 @@ GAME_MODEL = 2;   // 0 单机 1双人 2 联网
 player = null;
 CONTROL = true; // 控制权
 SID_FLAG = 1;  // sid 符号位
+ROOM_INDEX = null;
 
 function both(tank_name, pos) {
 	switch (GAME_MODEL) {
@@ -68,8 +69,15 @@ function stop(tank) {
 
 function start_game(game_model, room_id) {
     GAME_MODEL = game_model;
-	if (GAME_MODEL <= 1)
+    if (ROOM_INDEX != null) {
+        send_leave_room();
+    }
+    BOTHS = {};
+    player = null;
+    ROOM_INDEX = null;
+	if (GAME_MODEL <= 1) {
 		enter_stage("1");
+    }
     else
-        init_s(room_id);
+        start(room_id);
 }

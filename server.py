@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import time
 import os
 import geventwebsocket
 
@@ -20,15 +21,17 @@ class RoomIndex(object):
         self.room_indexs = []  # [room_id, ping]
     # type: num ping del add
     def _send_info(self, room_index, inf_type, value=0):
-        info = {
-            'c': 'reset_room',
-            'room_index': room_index,
-            'type': inf_type,
-            'value': value,
-        }
-        msg = json.dumps(info)
+        # info = {
+        #     'c': 'reset_room',
+        #     'room_index': room_index,
+        #     'type': inf_type,
+        #     'value': value,
+        # }
+        # msg = json.dumps(info)
+        # for player in all_players:
+        #     player.send_self(msg)
         for player in all_players:
-            player.send_self(msg)
+            send_room_infs(player)
 
     def add_room_id(self, room_id):
         if None in self.room_indexs:
@@ -55,7 +58,7 @@ class RoomIndex(object):
             else:
                 self.room_indexs[room_index][1] = int((value + self.room_indexs[room_index][1]) / 2)
             value = self.room_indexs[room_index][1]
-        self._send_info(self, room_index, inf_type, value)
+        self._send_info(room_index, inf_type, value)
 
 ROOMINDEX = RoomIndex()
 
@@ -68,22 +71,26 @@ def add_room_member(players, player):
     player.room_id = origin_player.room_id
     player.room_index = origin_player.room_index
     ROOMINDEX.reset_room_info(player.room_index, 'num', 2)
+    return player.room_index
 
 def get_is_control(player, room_id):
+    # 判断是否切换房间，需要将其从原来房间释放
+    if player.room_id:
+        leave_room(player)
     if room_id:
         if room_id in rooms and len(rooms[room_id]) == 1:
-            add_room_member(rooms[room_id], player)
-            return False
+            room_index = add_room_member(rooms[room_id], player)
+            return False, room_index 
         for room_id, players in rooms.items():
             if len(players) == 1:
-                add_room_member(players, player)
-                return False
-    new_room_id = player.core_id
+                room_index = add_room_member(players, player)
+                return False, room_index
+    new_room_id = player.core_id + str(time.time())
     player.room_id = new_room_id
     rooms[new_room_id] = [player]
     room_index = ROOMINDEX.add_room_id(new_room_id)
     player.room_index = room_index;
-    return True
+    return True, room_index
 
 
 class Player(object):
@@ -115,25 +122,27 @@ class Player(object):
         if msg == 'ping':
             self.send_self('pong')
             return
+        print self.core_id, "  :", msg
         info = json.loads(msg)
         if info['c'] == 'ping':
             ping_value = info['ping']
-            if not self.room_index:
+            if self.room_index == None:
                 return
             ROOMINDEX.reset_room_info(self.room_index, 'ping', ping_value)
-
-        if info['c'] == 's':
+            return
+        elif info['c'] == 's':
             # info['uuid'] = self.core_id
-            is_control = get_is_control(self, info.get('room_id'))
-            info['is_control'] = is_control
+            is_control, room_index = get_is_control(self, info.get('room_id'))
+            info['is_control'], info['room_index'] = is_control, room_index
             self.send_self(info)
         elif info['c'] == 'req_init':
             self.send_partner(info)
         elif info['c'] == 'rsp_init':
             self.send_partner(info)
+        elif info['c'] == 'end':
+            leave_room(self)
         else:
             self.broad(info)
-
 
 def app(environ, start_response):
     ws = environ.get("wsgi.websocket")
@@ -141,31 +150,42 @@ def app(environ, start_response):
     player = Player(ws, core_id)
     all_players.append(player)
     print "connect: ", player.core_id
+    send_room_infs(player)
     try:
         while True:
             msg = ws.receive()
-            print core_id, "  :", msg
             player.handler(msg)
-    # except geventwebsocket.WebSocketError, ex:
-    #     print "player left: ", player.core_id
-    except Exception, e:
-        print e, e.message
+    except geventwebsocket.WebSocketError, ex:
+        print "websocet closse!"
+    finally:
         disconnect_player(player)
 
 
-def disconnect_player(player):
-    rooms[player.room_id].remove(player)
-    if not rooms[player.room_id]:
-        del rooms[player.room_id]
-        ROOMINDEX.del_room_index(player.room_index)
-    else:
-        ROOMINDEX.reset_room_info(player.room_index, 'num', 1)
+def send_room_infs(player):
+    player.send_self(
+        {
+            'c': 'set_rooms', 
+            'room_infs': ROOMINDEX.room_indexs,
+        }
+    )
 
-    all_players.remove(player)
-    print "disconnect: ", player.core_id
+def leave_room(player):
+    if player.room_id in rooms and player in rooms[player.room_id]:
+        rooms[player.room_id].remove(player)
+        if not rooms[player.room_id]:
+            del rooms[player.room_id]
+            ROOMINDEX.del_room_index(player.room_index)
+        else:
+            ROOMINDEX.reset_room_info(player.room_index, 'num', 1)
     if player.partner and player.partner in all_players:
         player.send_partner(GET_CONTROL_MSG)
         player.partner.partner = None
+
+def disconnect_player(player):
+    leave_room(player)
+    if player in all_players:
+        all_players.remove(player)
+    print "disconnect: ", player.core_id
 
 
 
@@ -174,4 +194,4 @@ agent = "gevent-websocket/%s" % (geventwebsocket.get_version())
 
 
 print "Running %s from %s" % (agent, path)
-geventwebsocket.WebSocketServer(("0.0.0.0", 9091), app, debug=False).serve_forever()
+geventwebsocket.WebSocketServer(("0.0.0.0", 9091), app, debug=True).serve_forever()

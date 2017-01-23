@@ -6,86 +6,88 @@ BOTHS = {};
 s = null;
 D = new Date();
 
-
+init_s();
+setInterval(s_ping, 5000);
 function get_id() {
 	id_seq += 1;
 	return id_seq * SID_FLAG;
 }
 
-function init_s(room_id) {
+function start(room_id) {
+    if (!s || s.readyState != 1) {
+        init_s();
+    } 
     send_start(room_id);  // begin  command
 }
 // var s = new WebSocket("ws://192.168.1.110:9091/");
 
 
-s = new WebSocket("ws://192.168.1.105:9091/");
-s.onopen = function() {
-//alert("connected !!!");
+// s = new WebSocket("ws://192.168.1.105:9091/");
+function init_s() {
+    s = new WebSocket("ws://127.0.0.1:9091/");
+    s.onopen = function() {
+       s_ping(); 
+    };
+    s.onclose = function() {
+    };
     
-};
-s.onclose = function() {
-    send_died(player); 
-};
-
-
-setInterval(s_ping, 5000);
-
-
-
-s.onmessage = function(e) {
-    if (e.data == "pong") {
-        var now_D = new Date();
-        var ping_value = now_D.getTime() - D.getTime()
-        report_ping(ping_value);
-        show_self_ping(ping_value);
-        return;
+    s.onmessage = function(e) {
+        if (e.data == "pong") {
+            var now_D = new Date();
+            var ping_value = now_D.getTime() - D.getTime()
+            report_ping(ping_value);
+            show_self_ping(ping_value);
+            return;
+        }
+    
+        var obj = eval("(" + e.data + ")");
+        var cmd = obj.c;
+        switch (cmd) {
+            case "set_rooms":
+                add_rooms(obj["room_infs"]);
+                break;
+            case "reset_room":
+                reset_room(obj["room_index"], obj["type"], obj["value"]);
+                break;
+        	case "s":
+        		recv_start(obj["is_control"], obj["room_index"]);
+        		break;
+    	    case "b":
+    	    	recv_tank_both(obj["name"], obj["pos"], obj["rotation"], obj["sid"]);
+    	    	break;
+    	    case "t":
+    	    	recv_turn(obj["sid"], obj["direct"], obj["info"]);
+    	    	break;
+    	    case "sh":
+    	    	recv_shot(obj["m_sid"], obj["sid"]);
+    	    	break;
+    	    case "d":
+    	    	recv_died(obj["sid"]);
+    	    	break;
+    	    case "st":
+    	    	recv_stop(obj["sid"], obj["map_distance"], obj["info"]);
+    	    	break;
+    	    case "req_init":
+    	    	send_init();
+                player.directs = [];
+                player.stop();
+    	    	Crafty.pause();
+    	    	break;
+    	    case "partner_ready":
+    	    	recv_partner_ready();
+        		Crafty.pause();
+    	    	break;
+    	    case "rsp_init":
+    	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities'], obj['player_pos'], obj['partner_id_flag']);
+    	    	Crafty.pause();
+    	    	send_partner_ready();
+    	    	break;
+            case "control":
+                get_control();
+                break;
+    	}	
     }
-
-    var obj = eval("(" + e.data + ")");
-    var cmd = obj.c;
-    switch (cmd) {
-        case "reset_room":
-            reset_room(obj["room_index"], obj["type"], obj["value"]);
-            break;
-    	case "s":
-    		recv_start(obj["is_control"]);
-    		break;
-	    case "b":
-	    	recv_tank_both(obj["name"], obj["pos"], obj["rotation"], obj["sid"]);
-	    	break;
-	    case "t":
-	    	recv_turn(obj["sid"], obj["direct"], obj["info"]);
-	    	break;
-	    case "sh":
-	    	recv_shot(obj["m_sid"], obj["sid"]);
-	    	break;
-	    case "d":
-	    	recv_died(obj["sid"]);
-	    	break;
-	    case "st":
-	    	recv_stop(obj["sid"], obj["map_distance"], obj["info"]);
-	    	break;
-	    case "req_init":
-	    	send_init();
-            player.directs = [];
-            player.stop();
-	    	Crafty.pause();
-	    	break;
-	    case "partner_ready":
-	    	recv_partner_ready();
-    		Crafty.pause();
-	    	break;
-	    case "rsp_init":
-	    	rsp_init(obj['stage_num'], obj['stage_info'], obj['map_distance'], obj['entities'], obj['player_pos'], obj['partner_id_flag']);
-	    	Crafty.pause();
-	    	send_partner_ready();
-	    	break;
-        case "control":
-            get_control();
-            break;
-	}	
 }
-
 
 
 
@@ -117,12 +119,16 @@ function set_entity_info(model, info) {
 
 function send(obj) {
 	var msg = JSON.stringify(obj);
-	s.send(msg); 
+   if (s && s.readyState == 1) {
+	    s.send(msg); 
+    }
 }
 
 function s_ping() {
     D = new Date();
-    s.send("ping");
+   if (s && s.readyState == 1) {
+        s.send("ping");
+    }
 }
 
 function report_ping(ping_value) {
@@ -133,6 +139,12 @@ function report_ping(ping_value) {
     send(json);
 }
 
+function send_leave_room() {
+	var json = {
+		c: 'end',
+	}
+	send(json);
+}
 
 function send_start(room_id) {
 	var json = {
@@ -142,8 +154,9 @@ function send_start(room_id) {
 	send(json);
 }
 
-function recv_start(is_control) {
-    CONTROL = is_control
+function recv_start(is_control, room_index) {
+    CONTROL = is_control;
+    ROOM_INDEX = room_index;
 	if (CONTROL) {
         enter_stage("1");
     }

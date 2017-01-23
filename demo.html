@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -46,7 +44,7 @@
 		<div id="game"></div>
 	</div>
     <div class="col-md-3">
-  		.col-md-1
+        吐槽区
     </div>
 </div>
 
@@ -83,7 +81,8 @@
     	$("#self_ping").html(ping_value);
     }
 
-    function addRoom(room_id, room_index) {
+    function addRoom(room_id, room_index, ping) {
+        var ping = ping ? ping.toString() : "--";
 	    var txt1=$("<div></div>");            // 以 HTML 创建新元素
 	    var txt2=$("<div></div>");  // 以 jQuery 创建新元素
 	    var txt3=$("<div></div>");  // 以 DOM 创建新元素
@@ -95,14 +94,27 @@
 	    txt2.attr("class", "col-md-3 room");
 	    txt3.attr("class", "col-md-3 room");
 	    txt4.attr("class", "col-md-3 room");
-	    txt4.attr("onclick", "join(" + room_id + ")");
-	    txt1.html("1");
+	    txt4.attr("onclick", "join(2, '" + room_id.toString() + "')");
+	    txt1.html(room_index);
 	    txt2.html("1/2");
-	    txt3.html("12ms");
+	    txt3.html(ping + "ms");
 	    txt4.html("加入");
 	    row.append(txt1,txt2,txt3,txt4); 
 	    $("#romm_table").append(row);
-	    $("p").append(txt1,txt2,txt3);        // 追加新元素
+    }
+
+    function add_rooms(infs) {
+        $("[room_index]").each(function(i) {
+            this.remove();
+        });
+        for (var index in infs ) {
+            // 可能有空房间
+            if (infs[index]) {
+                var room_id = infs[index][0];
+                var room_ping = infs[index][1];
+                addRoom(room_id, index, room_ping);
+            }
+        }
     }
 
     function delRoom(room_index) {
@@ -112,13 +124,13 @@
     function reset_room(room_index, type, value) {
     	if (type == "num") {
     		if (value == 1)
-    			$("[room_index='"+ room_index +"']:eq(3)").html("加入");
+    			$("[room_index='"+ room_index +"']").children(".col-md-3")[3].innerHTML = "加入";
     		else
-    			$("[room_index='"+ room_index +"']:eq(3)").html("");
-    	    $("[room_index='"+ room_index +"']:eq(1)").html(value.toString()+"/2");
+    			$("[room_index='"+ room_index +"']").children(".col-md-3")[3].innerHTML = "";
+    	    $("[room_index='"+ room_index +"']").children(".col-md-3")[1].innerHTML = value.toString()+"/2";
     	}
     	else if (type == "ping")
-    	    $("[room_index='"+ room_index +"']:eq(2)").html(value.toString()+"ms");
+    	    $("[room_index='"+ room_index +"']").children(".col-md-3")[2].innerHTML = value.toString()+"ms";
     	else if (type == "del")
     		delRoom(room_index);
     	else if (type == "add")
