@@ -18,7 +18,8 @@ function init_s(room_id) {
 // var s = new WebSocket("ws://192.168.1.110:9091/");
 
 
-s = new WebSocket("ws://192.168.1.105:9091/");
+//s = new WebSocket("ws://192.168.1.105:9091/");
+s = new WebSocket("ws://42.96.168.85:9091/");
 s.onopen = function() {
 //alert("connected !!!");
     
@@ -259,6 +260,7 @@ function recv_tank_both(tank_name, pos, rotation, sid) {
 }
 
 function send_turn(tank, direct) {
+    tank.turn(direct);
 	var json = {
 		c: 't',
 		info: get_entity_info(tank),
@@ -324,6 +326,7 @@ function send_stop(tank) {
 		info: get_entity_info(tank),
 	}
 	send(json);
+    tank.stop();
 }
 
 function recv_stop(sid, map_distance, info) {
@@ -334,8 +337,8 @@ function recv_stop(sid, map_distance, info) {
 	 	// Crafty.e("2D, DOM, Collision").each(function(index) {
 	 	// 	this.y += (bgmap.map_distance - map_distance);
 	 	// });
-        for (var sid in BOTHS) {
-            BOTHS[sid].y += (bgmap.map_distance - map_distance);
+        for (var this_sid in BOTHS) {
+            BOTHS[this_sid].y += (bgmap.map_distance - map_distance);
         }
 	 	bgmap.map_distance = map_distance;
 	 	bgmap.fresh_bg();

@@ -68,9 +68,9 @@ CONF = {
 	"Terrorsmallspider": {
 		"img": "assets/terrorsmallspider.gif",
 		"rect": [20, 20],
-		"speed": [2, 2, 2, 5],
+		"speed": [3, 4, 5, 6],
     	"shot_rate": 0,
-    	"turn_rate": 0.2,
+    	"turn_rate": 0.1,
     	"maxhealth": 10,
 		"died_name": "bulletexplod",
 	},

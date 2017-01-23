@@ -127,9 +127,7 @@ class Player(object):
             is_control = get_is_control(self, info.get('room_id'))
             info['is_control'] = is_control
             self.send_self(info)
-        elif info['c'] == 'req_init':
-            self.send_partner(info)
-        elif info['c'] == 'rsp_init':
+        elif info['c'] in ['t', 'req_init', 'rsp_init', 'st']:
             self.send_partner(info)
         else:
             self.broad(info)
@@ -144,7 +142,6 @@ def app(environ, start_response):
     try:
         while True:
             msg = ws.receive()
-            print core_id, "  :", msg
             player.handler(msg)
     # except geventwebsocket.WebSocketError, ex:
     #     print "player left: ", player.core_id
