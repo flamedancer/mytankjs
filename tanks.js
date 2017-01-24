@@ -159,7 +159,7 @@ function MyTank(postion) {
 		var old_x = this.x;
 		var old_y = this.y;
     	this.x = this.x + this.direct[0] * this.now_speed;
-    	this.y = this.y + this.direct[1] * this.now_speed;
+    	this.y = this.y + this.direct[1] * this.now_speed
     	if (bgmap.map_passive(this.x, this.y, this.w, this.h)>0) {
     		this.x = old_x;
     		this.y = old_y;
@@ -194,8 +194,10 @@ function Tankstate_move(tank) {
 	this.check_conditions = function() {
 
 		if (CONTROL) {
-			if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0)
-	    		return this.mold.died();
+			if (bgmap.map_passive(this.mold.x, this.mold.y, this.mold.w, this.mold.h) > 0) {
+	    		this.mold.died();
+                return;
+            }
 	    	x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
 	    	y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
 	    	if (bgmap.map_passive(x, y, this.mold.w, this.mold.h) > 0)

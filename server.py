@@ -135,9 +135,7 @@ class Player(object):
             is_control, room_index = get_is_control(self, info.get('room_id'))
             info['is_control'], info['room_index'] = is_control, room_index
             self.send_self(info)
-        elif info['c'] == 'req_init':
-            self.send_partner(info)
-        elif info['c'] == 'rsp_init':
+        elif info['c'] in ['t', 'req_init', 'rsp_init', 'st']:
             self.send_partner(info)
         elif info['c'] == 'end':
             leave_room(self)
