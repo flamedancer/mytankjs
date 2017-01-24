@@ -157,6 +157,7 @@ function send_start(room_id) {
 function recv_start(is_control, room_index) {
     CONTROL = is_control;
     ROOM_INDEX = room_index;
+    show_self_room(room_index);
 	if (CONTROL) {
         enter_stage("1");
     }

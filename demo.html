@@ -10,11 +10,13 @@
         <div class="row" id='title'>
         《魔力坦克ONLINE》
         </div>
+        <div class="row" id='self_room'>
+        </div>
         <div class="row">
-        	<div class="col-md-4 room" onclick="join(0);">
+        	<div class="col-md-4 room can_click" onclick="join(0);">
                  单机练习
             </div>
-        	<div class="col-md-4 room" onclick="join(2, '');">
+        	<div class="col-md-4 room can_click" onclick="join(2, '');">
                 新建房间
             </div>
         	<div class="col-md-4 room">
@@ -33,7 +35,7 @@
 			      <div class="col-md-3 room">
 			        ping
 			      </div>
-			      <div class="col-md-3 room" onclick="join(2)">
+			      <div class="col-md-3 room can_click" onclick="join(2)">
 			       快速加入
 			      </div>
 			    </div>
@@ -43,19 +45,43 @@
     <div class="col-md-5">
 		<div id="game"></div>
 	</div>
-    <div class="col-md-3">
-        吐槽区
+    <div class="col-md-3" id="contactme">
+        <div class="row">
+            <div class="panel panel-default">
+              <div class="panel-heading">简介</div>
+              <div class="panel-body">
+              欢迎各位数值、策划、美术、程序等大神吐槽
+              </div>
+            </div>
+        </div>
+        <div class="row" id="weixinmsg">
+        联系我(微信)：
+        </div>
+        <div class="row" id="weixindiv">
+            <img src="assets/myweixin.png" id="weixin">
+        </div>
+        <div class="row" id="chatlink">
+            <a href="http://flamedancer.online:7000/" target="_blank">吐槽请点我-_-</a>
+        </div>
     </div>
 </div>
 
 </body>
-<style> 
+<style type="text/css"> 
 /*body{ text-align:center} */
 .button_span {width: 100%;}
 #romm_table {margin-top:5%;}
-#game{ margin:0 auto; border:1px solid #F00;} 
+#game{ margin:0 auto; border:1px solid blue;} 
 .room{ margin:0 auto; border:1px solid #0000CD;text-align:center;}
-/* css注释：为了观察效果设置宽度 边框 高度等样式 */ 
+#title {font-size:larger}
+#weixin {max-width: 150px; max-height:150px;}
+#contactme {text-align:center;}
+#chatlink {padding: 20%;}
+.can_click {font-weight: bold;font-style:oblique;color:red;text-decoration:blink; }
+.can_click:link    {color:blue;}
+.can_click:visited {color:blue;}
+.can_click:hover   {color:red; cursor:pointer;}
+.can_click:active  {color:yellow;}
 </style>
 
 <!-- Latest compiled and minified CSS -->
@@ -93,7 +119,7 @@
 	    txt1.attr("class", "col-md-3 room");
 	    txt2.attr("class", "col-md-3 room");
 	    txt3.attr("class", "col-md-3 room");
-	    txt4.attr("class", "col-md-3 room");
+	    txt4.attr("class", "col-md-3 room can_click");
 	    txt4.attr("onclick", "join(2, '" + room_id.toString() + "')");
 	    txt1.html(room_index);
 	    txt2.html("1/2");
@@ -141,6 +167,15 @@
     	start_game(game_model, room_id);
     }
 
+    function show_self_room(room_index) {
+        if (typeof room_index == "undefine") {
+            $("#self_room").html("");
+        }
+        else {
+            var info = "正在房间：" + room_index.toString();
+            $("#self_room").html(info);
+        }
+    }
 
 </script>
 <script type="text/javascript">

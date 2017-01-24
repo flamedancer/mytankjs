@@ -76,7 +76,9 @@ function start_game(game_model, room_id) {
     player = null;
     ROOM_INDEX = null;
 	if (GAME_MODEL <= 1) {
+        get_control();
 		enter_stage("1");
+        show_self_room();
     }
     else
         start(room_id);

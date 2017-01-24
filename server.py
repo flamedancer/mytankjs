@@ -98,7 +98,7 @@ class Player(object):
         self.wc = wc
         self.core_id = core_id
         self.room_id = ''
-        self.room_index = None
+        self.room_index = -1
         self.partner = None
 
     def send_self(self, info):
@@ -132,6 +132,8 @@ class Player(object):
             return
         elif info['c'] == 's':
             # info['uuid'] = self.core_id
+            if 'room_id' in info and self.room_id == info['room_id']:
+                return
             is_control, room_index = get_is_control(self, info.get('room_id'))
             info['is_control'], info['room_index'] = is_control, room_index
             self.send_self(info)
