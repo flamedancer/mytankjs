@@ -266,6 +266,8 @@ function send_tank_both(tank_name, pos, rotation) {
 }
 
 function recv_tank_both(tank_name, pos, rotation, sid) {
+    if (sid in BOTHS)
+        return
 	var tank = eval(tank_name)(pos);
 	tank.rotation = rotation;
 	BOTHS[sid] = tank;

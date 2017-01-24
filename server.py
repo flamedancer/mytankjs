@@ -98,8 +98,10 @@ class Player(object):
         self.wc = wc
         self.core_id = core_id
         self.room_id = ''
-        self.room_index = -1
+        self.room_index = None 
         self.partner = None
+
+        self.start_time = 0    # 这局开始时间 避免频繁开始
 
     def send_self(self, info):
         msg = json.dumps(info) if not isinstance(info, (str)) else info
@@ -122,7 +124,6 @@ class Player(object):
         if msg == 'ping':
             self.send_self('pong')
             return
-        print self.core_id, "  :", msg
         info = json.loads(msg)
         if info['c'] == 'ping':
             ping_value = info['ping']
@@ -132,17 +133,22 @@ class Player(object):
             return
         elif info['c'] == 's':
             # info['uuid'] = self.core_id
-            if 'room_id' in info and self.room_id == info['room_id']:
+            now = time.time()
+            if now - self.start_time <= 3:
+                return
+            if self.room_id and 'room_id' in info and self.room_id == info['room_id']:
                 return
             is_control, room_index = get_is_control(self, info.get('room_id'))
             info['is_control'], info['room_index'] = is_control, room_index
             self.send_self(info)
+            self.start_time = now
         elif info['c'] in ['t', 'req_init', 'rsp_init', 'st']:
             self.send_partner(info)
         elif info['c'] == 'end':
             leave_room(self)
         else:
             self.broad(info)
+        print self.core_id, "  :", msg
 
 def app(environ, start_response):
     ws = environ.get("wsgi.websocket")
@@ -180,6 +186,8 @@ def leave_room(player):
     if player.partner and player.partner in all_players:
         player.send_partner(GET_CONTROL_MSG)
         player.partner.partner = None
+    player.room_id = ''
+    player.room_index = None
 
 def disconnect_player(player):
     leave_room(player)

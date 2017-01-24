@@ -59,8 +59,9 @@ function Bgmap() {
 	}
 	this.reset = function(mapname) {
 		this.backpic = 'url(assets/maps/' + mapname +'.jpg)';
-		this.bitmap = BITMAP[mapname];
+		this.bitmap = $.extend(true, [], BITMAP[mapname]);
 		this.map_distance = this.bitmap.length * this.bitmap_point_height - SCREEN_HEIGHT;
+	    this.map_over = false;
 		this.fresh_bg();
 	}
 	this.move_by_player = function(player) {

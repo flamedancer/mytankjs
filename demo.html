@@ -168,7 +168,7 @@
     }
 
     function show_self_room(room_index) {
-        if (typeof room_index == "undefine") {
+        if (typeof room_index == "undefined") {
             $("#self_room").html("");
         }
         else {
@@ -177,11 +177,7 @@
         }
     }
 
-</script>
-<script type="text/javascript">
-	
-	Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT, document.getElementById('game'));
- 	
+    Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT, document.getElementById('game'));
 
 </script>
 </html>
