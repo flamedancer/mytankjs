@@ -170,6 +170,7 @@ function MyTank(postion) {
    	});
    	// set_collision(tank);
         // Crafty.log(hitData);});
+   cur_stage.mytank_both = true;
    return tank;
 }
 
@@ -336,6 +337,8 @@ function Bossspider(postion) {
     tank.bind('EnterFrame', function(){
 		tank.brain.think();
    	});
+    // 设置 stage 标记
+    cur_stage.boss_both = true;
    	return tank;
 }
 

@@ -77,7 +77,8 @@ function Stage_win(stage) {
     this.time_cnt = 400;
 	this.do_actions = function() { this.time_cnt--; }
 	this.check_conditions = function() {
-        if (this.time_cnt <=0) {
+        if (this.time_cnt <=0 && !this.stage.stage_over) {
+            this.stage.stage_over = true;
             enter_stage("1");
         }
 	};
@@ -90,7 +91,8 @@ function Stage_fail(stage) {
     this.time_cnt = 400;
 	this.do_actions = function() { this.time_cnt--; }
 	this.check_conditions = function() {
-        if (this.time_cnt <=0) {
+        if (this.time_cnt <=0 && !this.stage.stage_over) {
+            this.stage.stage_over = true;
             enter_stage("1");
         }
 	}
@@ -99,11 +101,14 @@ function Stage_fail(stage) {
 function Stage() {
 	var stage = Crafty.e();
 	stage.mytank = null;
+	stage.mytank_boss = false;
 	stage.start_image = null;
 	stage.stage_begin = false;
 	stage.statu = null;
 	stage.servant_over = false;
+	stage.stage_over = false;
     stage.boss_img = "";
+    stage.start_boss_both = false;
     stage.boss_both = false;
     stage.boss_animation_over = false;
 	stage.brain = new StateMachine();
@@ -122,13 +127,15 @@ function Stage() {
 		    return this.statu;
 		},
         is_fail: function() {
-            if (Crafty("MyTank").length == 0)
+            if (cur_stage.mytank_both && Crafty("MyTank").length == 0) {
                 return true;
+            }
             return false;
         },
         is_win: function() {
-            if (Crafty(this.boss_img).length == 0)
+            if (cur_stage.boss_both && Crafty(cur_stage.boss_img).length == 0) {
                 return true;
+            }
             return false;
         },
 	});
@@ -160,15 +167,15 @@ function Stage1() {
  		},
  		startboss: function() {
  			if (typeof(this.animation_bothof_boss) == "undefined" && 
- 				!this.boss_both){
+ 				!this.start_boss_both  && !this.boss_both){
 	        	// 出场动画
 	        	this.animation_bothof_boss = Bossspider_both_Animation(160, -80);
 	        	this.boss_animation_over = true;
 	        }
    		},
    		boss: function() {
-   			if (!(this.boss_both)) {
-	   			this.boss_both = true;
+   			if (!(this.boss_both || this.start_boss_both) ) {
+                this.start_boss_both = true;
 	   			if (CONTROL)
 	   				both(this.boss_img, [160, 30]);
 			}
