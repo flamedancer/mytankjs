@@ -29,6 +29,7 @@ function init_s() {
        s_ping(); 
     };
     s.onclose = function() {
+        send_leave_room();
     };
     
     s.onmessage = function(e) {
