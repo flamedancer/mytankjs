@@ -45,13 +45,13 @@ CONF = {
 	    "died_name": "tankexplod",
 	},
 	"IceTank": {
-		"img": "assets/ai_icetank.gif",
+		"img": "assets/icetank.gif",
 		"rect": [30, 30],
 		"speed": 1,
-    	"shot_rate": 0.02,
-    	"turn_rate": 0.01,
-    	"bullet": "NormalBullet",
-    	"maxhealth": 120,
+    	"shot_rate": 0.01,
+    	"turn_rate": 0.008,
+    	"bullet": "IceBullet",
+    	"maxhealth": 150,
     	"died_name": "tankexplod",
 	},
 	"Bossspider": {
@@ -85,6 +85,12 @@ CONF = {
 		"speed": 5,
 		"died_name": "bulletexplod",
 	},
+	"IceBullet": {
+		"img": "assets/icebullet.gif",
+		"rect": [30, 30],
+		"speed": 3,
+		"died_name": "",
+	},
 
 	"tankexplod": {
 		"imgs": ["assets/bomb_1.gif", "assets/bomb_2.gif", "assets/bomb_3.gif"],
@@ -97,7 +103,11 @@ CONF = {
 	"Bossspider_both_Animation": {
 		"img": "assets/bossspider.gif",
 		"rect": [60, 60],
-	}
+	},
+    "Frozen": {
+		"img": "assets/Frozen.gif",
+		"rect": [60, 72],
+    }
 
 }
 
@@ -113,6 +123,7 @@ COllISION_CONF = {
                     "ai_bossgoddess": [0, 0, 0],
                     "ai_pullwavegolem": [1, 1, 0],
                     "ai_pushwavegolem": [1, 0, 0],
+                    'IceTank' : [1, 30, 1000],
                     "Terrorsmallspider":[0, 10, 10],
                     'Bossspider': [1, 1000, 0],
                     'AiTank' : [1, 0, 0]
@@ -122,6 +133,7 @@ COllISION_CONF = {
                     "AiTank" : [0, 50, 50],
                     "Terrorsmallspider": [0, 50, 50],
                     "Bossspider": [0, 50, 50],
+                    "IceTank": [0, 50, 50],
                     
                 },  
                 
@@ -130,6 +142,12 @@ COllISION_CONF = {
                     "MyTank" : [0, 60, 60]
                     
                 },
+
+  "IceBullet" :
+                {
+                    "MyTank" : [0, 30, 30, "Frozen"],
+                  },
+
                 
     "AiTank" :
                 {
@@ -137,17 +155,10 @@ COllISION_CONF = {
                     
                 },
     
-    "ai_icetank" :
+    "IceTank" :
                 {
-                    "ai_normaltank" : [0, 0, 0],
-                    "mytank" : [1, 20, 20, 1],
-                    "mytank:skill_fireshield" : [1, 10, 10],
-                    "mytank:normalBullet" : [0, 10, 10],
-                    "ai_tankfactory":[1, 0, 0],
-                    'ai_pillbox': [1, 0, 0],
-                    'ai_icetank' : [0, 0, 0]
-                    
-                  },
+                    "NormalBullet" : [0, 1000, 50],
+                },
   
 
     "ai_normaltank:normalBullet" :
@@ -159,16 +170,7 @@ COllISION_CONF = {
                     'ai_pillbox': [1, 0, 0],
                 },
         
-    "ai_icetank:iceBullet" :
-                {
-                    "mytank" : [1, 10, 10, 1],
-                    "mytank:skill_fireshield" : [1, 10, 5],
-                    "mytank_normalBullet" : [0, 10, 10],
-                    "ai_tankfactory":[1, 0, 0],
-                    'ai_pillbox': [1, 0, 0]
-                    
-                  },
-
+  
     "mytank:skill_fireshield" : 
                 {
                     "ai_normaltank" : [0, 10, 10],
