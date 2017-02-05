@@ -88,7 +88,7 @@ CONF = {
 	"IceBullet": {
 		"img": "assets/icebullet.gif",
 		"rect": [30, 30],
-		"speed": 3,
+		"speed": 4,
 		"died_name": "",
 	},
 
@@ -158,6 +158,7 @@ COllISION_CONF = {
     "IceTank" :
                 {
                     "NormalBullet" : [0, 1000, 50],
+                    "MyTank" : [0, 1000, 30, "Frozen"],
                 },
   
 
