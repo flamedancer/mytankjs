@@ -1,5 +1,14 @@
 ENTITYS = {}
 
+function set_sprite(name) {
+	if (!(name in ENTITYS)) {
+		var obj = {};
+        var rect = CONF[name]["rect"];
+        var picture = CONF[name]["img"];
+		obj[name] = [0,0,rect[0],rect[1]];
+		ENTITYS[name] = Crafty.sprite(picture, obj);
+	}
+}
 
 function State() {
 　　　　this.name = "";
@@ -52,7 +61,7 @@ function Bgmap() {
 	this.map_distance = 500;
 	this.map_over = false;
 	this.bitmap_point_width = 16;
-	this.bitmap_point_height = 32;
+	this.bitmap_point_height = 16;
 	this.now_bitmap_rowtop = 0;
 	this.fresh_bg = function() {
 		Crafty.background(this.backpic + '0px -' + this.map_distance.toString() + 'px');
@@ -110,6 +119,8 @@ function Bgmap() {
 				this.bitmap[now_bitmap_rowtop][left_bit_point] = 0;
 				 if (enemy_id == 6)
 				 	both("AiTank", [enemy_left, 0]);
+				 else if (enemy_id == 4)
+				 	both("IceTank", [enemy_left, 0]);
 			}
 	}
 }
@@ -162,8 +173,8 @@ function Bossspider_both_Animation(x, y) {
 	var conf = CONF[name];
 	var picture = conf["img"];
 	var rect = conf["rect"];
-    Crafty.sprite(picture, {animation:[0,0,rect[0],rect[1]] });
-    var animation = Crafty.e("2D, DOM, animation");
+    set_sprite(name);
+    var animation = Crafty.e("2D, DOM, Bossspider_both_Animation");
     animation.attr({
 		x: x,
 		y: y,
@@ -177,48 +188,7 @@ function Bossspider_both_Animation(x, y) {
 		}	
    	});
    	return animation;
-
 }
-
-// function collision(model) {
-// 	if (!(model.name in CollISION_CONF))
-// 		return true;
-// 	var conf = CollISION_CONF[model.name];
-// 	var result = true;
-// 	Crafty("2D, Collision").each(function(index) {
-// 		if (this == model || (!(this.name in conf))) {
-// 			result = true;
-// 			return result;
-// 		}
-// 		if (conf[0] == 1) {
-// 			result = false;
-// 			return result;
-// 		}
-//     });
-//     return result;
-// }
-
-// function collision(hitData) {
-//  	if (!(this.name in COllISION_CONF))
-//  		return true;
-// 	var conf = COllISION_CONF[this.name];
-// 	var result = true;
-// 	for (var index in hitData) {
-// 		var obj = hitData[index]["obj"];
-// 		if (this == obj || (!(obj.name in conf))) {
-// 			result = true;
-// 			return result;
-// 		}
-// 		if (conf[obj.name][0] == 1) {
-// 			result = false;
-// 	    	this.x = this.x - this.direct[0] * this.now_speed;
-//     		this.y = this.y - this.direct[1] * this.now_speed;
-//     		this.stop();
-// 			return result;
-// 		}
-
-// 	}
-// }
 
 
 function set_collision(model) {
@@ -232,6 +202,8 @@ function set_collision(model) {
 			var obj = hitData[index]["obj"];
             this.wounded(conf[obj.name][1]);
             obj.wounded(conf[obj.name][2]);
+            if (conf[obj.name].length > 3)
+                eval(conf[obj.name][3])(obj);
 			if (conf[obj.name][0] == 1) {
 				result = false;
 		    	this.x = this.x - this.direct[0] * this.now_speed;
@@ -246,3 +218,30 @@ function set_collision(model) {
 	});
 
 }
+
+
+function Frozen(model) {
+    var name = "Frozen";
+	var conf = CONF[name];
+	var picture = conf["img"];
+	var rect = conf["rect"];
+    set_sprite(name);
+    model.movable = false;
+    stop(model);
+    var animation = Crafty.e("2D, DOM, Frozen");
+    animation.attr({
+		x: model.x - Math.floor((rect[0] - model.w) / 2),
+		y: model.y - Math.floor((rect[1] - model.h) / 2),
+        keep_time: 90,
+	});
+	animation.bind('EnterFrame', function(){
+		this.keep_time -= 1;
+		if (this.keep_time <= 0) {
+            model.movable = true;
+			this.destroy();
+		}	
+   	});
+   	return animation;
+}
+
+

@@ -1,19 +1,13 @@
 
 function Tank(name, postion) {
 	var conf = CONF[name];
-	var picture = conf["img"];
 	var name = name;
 	var rect = conf["rect"];
 	var speed = Array.isArray(conf["speed"]) ? range_choice(conf["speed"]): conf["speed"];
 	var hp = conf["maxhealth"];
 	var now_speed = speed;
 	
-	if (!(name in ENTITYS)) {
-		var obj = {};
-		obj[name] = [0,0,rect[0],rect[1]];
-		// Crafty.sprite(picture, {name:[0,0,rect[0],rect[1]]});
-		ENTITYS[name] = Crafty.sprite(picture, obj);
-	}
+    set_sprite(name);
 	var tank = Crafty.e("2D, DOM, Collision");
 	tank.addComponent("tank");
 	tank.addComponent(name);
@@ -27,7 +21,10 @@ function Tank(name, postion) {
 		now_speed: now_speed,
 		hp: hp,
 		name: name,
+        movable: true,
 		shot: function() {
+            if (!this.movable)
+                return;
 			if (!(this.bullet))
 				return;
 			var bullet = eval(this.bullet)(this);
@@ -46,6 +43,8 @@ function Tank(name, postion) {
 			this.now_speed = 0;
 		},
 		turn: function(direct) {
+            if (!this.movable)
+                return;
 			if (direct[0] == -1 && direct[1] == 0)
 				this.rotation = -90;
 			else if (direct[0] == 1 && direct[1] == 0)
@@ -168,8 +167,6 @@ function MyTank(postion) {
     	this.now_shot_interval--;
 
    	});
-   	// set_collision(tank);
-        // Crafty.log(hitData);});
    cur_stage.mytank_both = true;
    return tank;
 }
@@ -295,8 +292,9 @@ function Tankstate_died(tank) {
 	this.check_conditions = function() {return "died"};
 }
 
-function AiTank(postion) {
-	var tank = Tank("AiTank", postion);
+function AiTank(postion, tank_name) {
+    tank_name = tank_name || "AiTank";
+	var tank = Tank(tank_name, postion);
 	tank.shoting = 0;
 	tank.brain = new StateMachine();
 	tank.brain.add_state(new Tankstate_both(tank));
@@ -312,6 +310,10 @@ function AiTank(postion) {
    	});
    	// set_collision(tank);
    	return tank;
+}
+
+function IceTank(postion) {
+    return AiTank(postion, "IceTank");
 }
 
 

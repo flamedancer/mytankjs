@@ -159,6 +159,7 @@ function Stage1() {
 				return
 			this.stage_begin = true;
 			bgmap.reset('111');
+            bgmap.bitmap_point_height = 32;
 			if (CONTROL)
 			    both("MyTank", [88, 384]);
  		},
@@ -189,18 +190,64 @@ function Stage1() {
 	return stage;
 }
 
+function Stage2() {
+	var stage = Stage();
+	stage.start_image = "assets/icetank.gif";
+    stage.boss_img = "BossBouncer";
+	stage.attr({
+		begin : function() {
+			if (this.stage_begin)
+				return
+			this.stage_begin = true;
+			bgmap.reset('444');
+            bgmap.bitmap_point_height = 16;
+			if (CONTROL)
+			    both("MyTank", [168, 200]);
+ 		},
+ 		servant : function() {
+ 			this.servant_over = (bgmap.map_over && Crafty("ai").length == 0);
+ 		},
+ 		startboss: function() {
+ 			if (typeof(this.animation_bothof_boss) == "undefined" && 
+ 				!this.start_boss_both  && !this.boss_both){
+	        	// 出场动画
+	        	this.animation_bothof_boss = Animation_bothof_bossbouncer(180, 450);
+	        	this.boss_animation_over = true;
+	        }
+   		},
+   		boss: function() {
+   			if (!(this.boss_both || this.start_boss_both) ) {
+                this.start_boss_both = true;
+	   			if (CONTROL)
+	   				both(this.boss_img, [160, 30]);
+			}
+   		},
+   		startboss_over: function() {
+   			if (this.animation_bothof_boss.is_over)
+ 				return true;
+ 			return false;
+   		}
+	});
+	return stage;
+}
 
 Crafty.defineScene("stage1", function(attributes) {
 	cur_stage = Stage1();
 	cur_stage.brain.set_state("begin");
-    cur_stage.begin();
+});
+
+Crafty.defineScene("stage2", function(attributes) {
+	cur_stage = Stage2();
+	cur_stage.brain.set_state("begin");
 });
 
 function enter_stage(stage_num) {
+    stage_num = "2";
     BOTHS = {};
     player = null;
     if (cur_stage) 
         cur_stage.destroy();
     cur_stage = null;
-	Crafty.enterScene("stage1");
+	Crafty.enterScene("stage" + stage_num);
+    cur_stage.begin();
 }	
