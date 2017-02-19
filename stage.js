@@ -242,7 +242,7 @@ Crafty.defineScene("stage2", function(attributes) {
 });
 
 function enter_stage(stage_num) {
-    stage_num = "2";
+    stage_num = "1";
     BOTHS = {};
     player = null;
     if (cur_stage) 
