@@ -158,8 +158,8 @@ function Stage1() {
 			if (this.stage_begin)
 				return
 			this.stage_begin = true;
-			bgmap.reset('111');
             bgmap.bitmap_point_height = 32;
+			bgmap.reset('111');
 			if (CONTROL)
 			    both("MyTank", [88, 384]);
  		},
@@ -199,8 +199,8 @@ function Stage2() {
 			if (this.stage_begin)
 				return
 			this.stage_begin = true;
-			bgmap.reset('444');
             bgmap.bitmap_point_height = 16;
+			bgmap.reset('444');
 			if (CONTROL)
 			    both("MyTank", [168, 200]);
  		},
