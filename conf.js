@@ -1,12 +1,16 @@
 
 SCREEN_WIDTH = 384
 SCREEN_HEIGHT = 576
-DIRECTIONS = [ [0, -1], [1, 0], [0, 1], [-1, 0] ];  // 上下左右
+DIRECTIONS = [ [0, -1], [1, 0], [0, 1], [-1, 0],  [1, -1], [1, 1], [-1, 1], [-1, -1] ];  // 上左下右 上右 下右 下左 上左
 DIRECTION_U = 0;
+DIRECTION_R = 1;
 DIRECTION_D = 2;
 DIRECTION_L = 3;
-DIRECTION_R = 1;
 
+DIRECTION_UR = 4;
+DIRECTION_DR = 5;
+DIRECTION_DL = 6;
+DIRECTION_UL = 7;
 
 function get_direct_id(direct) {
 	if (direct[0] == 0) {
@@ -27,15 +31,15 @@ function get_direct_id(direct) {
 CONF = {
 	"MyTank": {
 		"ai": false,
-		"img": "assets/mytank.gif",
+		"icon": "assets/mytank.gif",
 		"rect": [32, 32],
 		"speed": 1,
-		"maxhealth": 100,
+		"maxhealth": 200,
 		"bullet": "NormalBullet",
 		"died_name": "tankexplod",
 	},
 	"AiTank": {
-		"img": "assets/aitank.gif",
+		"icon": "assets/aitank.gif",
 		"rect": [30, 29],
 		"speed": 2,
     	"shot_rate": 0.015,
@@ -45,7 +49,7 @@ CONF = {
 	    "died_name": "tankexplod",
 	},
 	"IceTank": {
-		"img": "assets/icetank.gif",
+		"icon": "assets/icetank.gif",
 		"rect": [30, 30],
 		"speed": 1,
     	"shot_rate": 0.01,
@@ -55,17 +59,17 @@ CONF = {
     	"died_name": "tankexplod",
 	},
 	"Bossspider": {
-		"img": "assets/bossspider.gif",
+		"icon": "assets/bossspider.gif",
 		"rect": [60, 60],
 		"speed": 1,
     	"shot_rate": 0.05,
     	"turn_rate": 0.01,
        	"bullet": "Terrorsmallspider",
-    	"maxhealth": 3000,
+    	"maxhealth": 2000,
 		"died_name": "bulletexplod",
 	},
 	"Terrorsmallspider": {
-		"img": "assets/terrorsmallspider.gif",
+		"icon": "assets/terrorsmallspider.gif",
 		"rect": [20, 20],
 		"speed": [2, 2, 4, 6],
     	"shot_rate": 0,
@@ -74,19 +78,19 @@ CONF = {
 		"died_name": "bulletexplod",
 	},
 	"NormalBullet": {
-		"img": "assets/shot.gif",
+		"icon": "assets/shot.gif",
 		"rect": [6, 18],
 		"speed": 5,
 		"died_name": "bulletexplod",
 	},
 	"AiBullet": {
-		"img": "assets/shot1.gif",
+		"icon": "assets/shot1.gif",
 		"rect": [6, 18],
 		"speed": 5,
 		"died_name": "bulletexplod",
 	},
 	"IceBullet": {
-		"img": "assets/icebullet.gif",
+		"icon": "assets/icebullet.gif",
 		"rect": [30, 30],
 		"speed": 4,
 		"died_name": "",
@@ -101,11 +105,34 @@ CONF = {
 		"rects": [[30, 30]],
 	},
 	"Bossspider_both_Animation": {
-		"img": "assets/bossspider.gif",
+		"icon": "assets/bossspider.gif",
 		"rect": [60, 60],
 	},
+	"Bossbouncer_both_Animation": {
+		"icon": "assets/bouncebullet.gif",
+		"rect": [30, 30],
+	},
+	"Bossbouncer": {
+		"icon": ["assets/bossbouncer1.gif", "assets/bossbouncer4.gif", "assets/bossbouncer3.gif", "assets/bossbouncer2.gif",
+				"assets/bossbouncer5.gif", "assets/bossbouncer8.gif", "assets/bossbouncer7.gif", "assets/bossbouncer6.gif"],
+		"rect": [32, 32],
+		"speed": 1,
+    	"shot_rate": 0.02,
+    	"turn_rate": 0.02,
+       	"bullet": "BounceBullet",
+    	"maxhealth": 2000,
+		"died_name": "bulletexplod",
+
+	},
+	"BounceBullet": {
+		"icon": "assets/bouncebullet.gif",
+		"rect": [30, 30],
+		"speed": 4,
+		"died_name": "",
+		"bounce_cnt": 5,
+	},
     "Frozen": {
-		"img": "assets/Frozen.gif",
+		"icon": "assets/Frozen.gif",
 		"rect": [60, 72],
     }
 
@@ -134,7 +161,7 @@ COllISION_CONF = {
                     "Terrorsmallspider": [0, 50, 50],
                     "Bossspider": [0, 50, 50],
                     "IceTank": [0, 50, 50],
-                    
+                    "Bossbounder": [0, 50, 50],
                 },  
                 
     "AiBullet" : 
@@ -294,12 +321,11 @@ COllISION_CONF = {
             
             },
 
-    "ai_bossbouncer":
+    "Bossbouncer":
             {
-                "ai_normaltank" : [0, 0, 0],
+                "NormalBullet" : [1, 50, 50],
                 "mytank" : [1, 2, 2],
                 "mytank:skill_fireshield" : [1, 10, 10],
-                "mytank:normalBullet" : [0, 10, 10],
                 "ai_tankfactory":[1, 0, 0],
                 'ai_pillbox': [1, 0, 0],
                 'ai_icetank' : [0, 0, 0],
@@ -307,16 +333,10 @@ COllISION_CONF = {
                 
             },
 
-    "ai_bossbouncer:bounceBullet":
-            {
-                "mytank" : [0, 20, 20, 1],
-                "mytank:skill_fireshield" : [1, 10, 20],
-                "mytank_normalBullet" : [0, 10, 10],
-                "ai_tankfactory":[1, 0, 0],
-                'ai_pillbox': [1, 0, 0],
-                "ai_bossbouncer:bounceBullet": [0, 0, 0],
-                "ai_bossbouncer":[0, 0, 0]
-            },
+  "BounceBullet" :
+                {
+                    "MyTank" : [0, 30, 30, "Frozen"],
+                  },
 
  
     "ai_tankfactory":

@@ -8,7 +8,7 @@ function Tank(name, postion) {
 	var now_speed = speed;
 	
     set_sprite(name);
-	var tank = Crafty.e("2D, DOM, Collision");
+	var tank = Crafty.e("2D, DOM, Collision, Image");
 	tank.addComponent("tank");
 	tank.addComponent(name);
 	tank.origin("center");
@@ -45,14 +45,33 @@ function Tank(name, postion) {
 		turn: function(direct) {
             if (!this.movable)
                 return;
-			if (direct[0] == -1 && direct[1] == 0)
-				this.rotation = -90;
-			else if (direct[0] == 1 && direct[1] == 0)
-				this.rotation = 90;
-			else if (direct[0] == 0 && direct[1] == -1)
-				this.rotation = 0;
-			else if (direct[0] == 0 && direct[1] == 1)
-				this.rotation = 180;
+            // 两种转向策略；每种方向一个图片 或者转动一个图片
+            // .image("myimage.png")
+            if (typeof conf["icon"] === "object") {
+            	var direct_index = DIRECTIONS.findIndex(function (item) {
+            		return item[0] == direct[0] && item[1] == direct[1];
+            	});
+            	this.image(conf["icon"][direct_index]);
+
+            }
+            else {
+				if (direct[0] == -1 && direct[1] == 0)
+					this.rotation = -90;
+				else if (direct[0] == 1 && direct[1] == 0)
+					this.rotation = 90;
+				else if (direct[0] == 0 && direct[1] == -1)
+					this.rotation = 0;
+				else if (direct[0] == 0 && direct[1] == 1)
+					this.rotation = 180;
+				else if (direct[0] == -1 && direct[1] == 1)
+					this.rotation = -45;
+				else if (direct[0] == 1 && direct[1] == 1)
+					this.rotation = 45;
+				else if (direct[0] == 1 && direct[1] == -1)
+					this.rotation = 135;
+				else if (direct[0] == -1 && direct[1] == 1)
+					this.rotation = -135;
+			}
 			this.direct = direct;
 			this.now_speed = this.speed;
 		}
@@ -224,7 +243,12 @@ function Tankstate_thinkdirect(tank) {
 	this.mold = tank;
 	this.do_actions = function() {
 		this.mold.stop();
-		var random_direct_id = [DIRECTION_U, DIRECTION_D, DIRECTION_L, DIRECTION_R][Math.ceil(Math.random()*4) - 1];
+		if (typeof this.mold.icon === "object") {
+			var direct_cnt = this.mold.icon.length;
+		}
+		else
+			var direct_cnt = 4;
+		var random_direct_id = Math.floor(Math.random()*direct_cnt);
 		turn(this.mold, DIRECTIONS[random_direct_id]);
 	};
 	this.check_conditions = function() {return "move"};
@@ -341,6 +365,15 @@ function Bossspider(postion) {
    	});
     // 设置 stage 标记
     cur_stage.boss_both = true;
+   	set_hpbar(tank.tp, tank.maxhealth);
+    tank.wounded = function(value) {
+		this.hp -= value;
+		if (this.hp <= 0) {
+			died(this);
+			this.hp = 0;
+		}
+		set_hpbar(this.tp, this.maxhealth);
+	}
    	return tank;
 }
 
@@ -360,5 +393,42 @@ function Terrorsmallspider(postion) {
     tank.bind('EnterFrame', function(){
 		tank.brain.think();		
    	});
+   	return tank;
+}
+
+
+function Bossbouncer(postion) {
+	var tank = Tank("Bossbouncer", postion);
+	tank.shoting = 0;
+	tank.brain = new StateMachine();
+	tank.brain.add_state(new Tankstate_both(tank));
+	tank.brain.add_state(new Tankstate_move(tank));
+	// tank.brain.add_state(new Tankstate_turn(tank, true));
+	tank.brain.add_state(new Tankstate_thinkdirect(tank));
+	tank.brain.add_state(new Tankstate_died(tank));
+	tank.both = null;
+    tank.brain.set_state("both");
+    // tank.shot = function() {
+    //     var pos = [this.x + Math.floor(this.w/2), this.y];
+    //     return Terrorsmallspider(pos);
+    // }
+ //    tank.turn = function(direct) {
+	// 	this.direct = direct;
+	// 	this.now_speed = this.speed;
+	// }
+    tank.bind('EnterFrame', function(){
+		tank.brain.think();
+   	});
+    // 设置 stage 标记
+    cur_stage.boss_both = true;
+   	set_hpbar(tank.tp, tank.maxhealth);
+    tank.wounded = function(value) {
+		this.hp -= value;
+		if (this.hp <= 0) {
+			died(this);
+			this.hp = 0;
+		}
+		set_hpbar(this.tp, this.maxhealth);
+	}
    	return tank;
 }

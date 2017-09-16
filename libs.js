@@ -4,7 +4,9 @@ function set_sprite(name) {
 	if (!(name in ENTITYS)) {
 		var obj = {};
         var rect = CONF[name]["rect"];
-        var picture = CONF[name]["img"];
+        var picture = CONF[name]["icon"];
+        if (typeof picture === "object")
+            picture = picture[0];
 		obj[name] = [0,0,rect[0],rect[1]];
 		ENTITYS[name] = Crafty.sprite(picture, obj);
 	}
@@ -171,7 +173,7 @@ function Bossspider_both_Animation(x, y) {
     // 大蜘蛛出场动画 渲染
     var name = "Bossspider_both_Animation";
 	var conf = CONF[name];
-	var picture = conf["img"];
+	var picture = conf["icon"];
 	var rect = conf["rect"];
     set_sprite(name);
     var animation = Crafty.e("2D, DOM, Bossspider_both_Animation");
@@ -188,6 +190,29 @@ function Bossspider_both_Animation(x, y) {
 		}	
    	});
    	return animation;
+}
+
+function Bossbouncer_both_Animation(x, y) {
+    // 大蜘蛛出场动画 渲染
+    var name = "Bossbouncer_both_Animation";
+    var conf = CONF[name];
+    var picture = conf["icon"];
+    var rect = conf["rect"];
+    set_sprite(name);
+    var animation = Crafty.e("2D, DOM, Bossbouncer_both_Animation");
+    animation.attr({
+        x: x,
+        y: y,
+        is_over: false,
+    });
+    animation.bind('EnterFrame', function(){
+        this.y += 1;
+        if (this.y >= 450) {
+            this.is_over = true;
+            this.destroy();
+        }   
+    });
+    return animation;
 }
 
 
@@ -223,7 +248,7 @@ function set_collision(model) {
 function Frozen(model) {
     var name = "Frozen";
 	var conf = CONF[name];
-	var picture = conf["img"];
+	var picture = conf["image"];
 	var rect = conf["rect"];
     set_sprite(name);
     model.movable = false;
@@ -244,4 +269,10 @@ function Frozen(model) {
    	return animation;
 }
 
+
+
+function set_hpbar(now_value, max_value) {
+    $('#booshp').attr("style", "width: "+Math.floor(now_value*100/max_value).toString()+"%");
+    $('#booshp').html(now_value);
+}
 

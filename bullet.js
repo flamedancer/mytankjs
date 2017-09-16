@@ -33,9 +33,50 @@ function Bulletstate_died(bullet) {
 }
 
 
+function Bulletstate_bounce_move(bullet) {
+    State.call();
+    this.name = "move";
+    this.mold = bullet;
+
+    this.do_actions = function() {
+        x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
+        y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
+        this.mold.x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
+        this.mold.y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
+        return "move";
+    };
+    this.check_conditions = function() {
+        x = this.mold.x + this.mold.direct[0] * this.mold.now_speed;
+        y = this.mold.y + this.mold.direct[1] * this.mold.now_speed;
+        map_status = bgmap.map_passive(x, y, this.mold.w, this.mold.h);
+        if ( map_status == 1 || map_status == 2) {
+        	this.mold.bounce_cnt = this.mold.bounce_cnt - 1;
+        	if (this.mold.bounce_cnt <= 0)
+            	this.mold.destroy();
+            else {
+            	var all_directs = [ [-this.mold.direct[0], this.mold.direct[1]], [this.mold.direct[0], -this.mold.direct[1]], [-this.mold.direct[0], -this.mold.direct[1]] ];
+            	for (var direct_index in all_directs) {
+            		var direct = all_directs[direct_index];
+            		var x = this.mold.x + direct[0] * this.mold.now_speed;
+            		var y = this.mold.y + direct[1] * this.mold.now_speed;
+            		var map_status = bgmap.map_passive(x, y, this.mold.w, this.mold.h);
+            		if ( map_status == 0) {
+            			this.mold.direct = direct;
+            			return "move";
+            		}
+            	}
+            	// 没有合适的方向
+            	this.mold.destroy();
+            }
+    	}
+        return "move";
+
+    };
+}
+
 function Bullet(name, owner) {
     var conf = CONF[name];
-    var picture = conf["img"];
+    var picture = conf["icon"];
     var name = name;
     var rect = conf["rect"];
     var speed = Array.isArray(conf["speed"]) ? range_choice(conf["speed"]): conf["speed"];
@@ -73,10 +114,6 @@ function Bullet(name, owner) {
     })
     
 
-    bullet.brain = new StateMachine();
-    bullet.brain.add_state(new Bulletstate_move(bullet));
-    bullet.brain.add_state(new Bulletstate_died(bullet));
-    bullet.brain.set_state("move");
     bullet.bind('EnterFrame', function(){
         bullet.brain.think();        
        });
@@ -85,20 +122,39 @@ function Bullet(name, owner) {
 }
 
 
+function set_default_brain(bullet) {
+    bullet.brain = new StateMachine();
+    bullet.brain.add_state(new Bulletstate_move(bullet));
+    bullet.brain.add_state(new Bulletstate_died(bullet));
+    bullet.brain.set_state("move");
+}
+
 function NormalBullet(owner) {
     var bullet = Bullet(owner.bullet, owner);
+    set_default_brain(bullet);
     return bullet;
 }
 
 function AiBullet(owner) {
     var bullet = Bullet(owner.bullet, owner);
+    set_default_brain(bullet);
     return bullet;
 }
 
 function IceBullet(owner) {
     var bullet = Bullet(owner.bullet, owner);
+    set_default_brain(bullet);
     bullet.died = function() {
          this.destroy();
     }
+    return bullet;
+}
+
+function BounceBullet(owner) {
+	var bullet = Bullet(owner.bullet, owner);
+	bullet.brain = new StateMachine();
+    bullet.brain.add_state(new Bulletstate_bounce_move(bullet));
+    bullet.brain.add_state(new Bulletstate_died(bullet));
+    bullet.brain.set_state("move");
     return bullet;
 }

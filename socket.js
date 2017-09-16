@@ -22,9 +22,10 @@ function start(room_id) {
 // var s = new WebSocket("ws://192.168.1.110:9091/");
 
 
+
 function init_s() {
-    //s = new WebSocket("ws://127.0.0.1:9091/");
-    s = new WebSocket("ws://flamedancer.online:9091/");
+    s = new WebSocket("ws://127.0.0.1:9091/");
+    // s = new WebSocket("ws://flamedancer.online:9091/");
     s.onopen = function() {
        s_ping(); 
     };

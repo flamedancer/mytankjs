@@ -44,6 +44,10 @@
 	</div>
     <div class="col-md-5">
 		<div id="game"></div>
+		<div class="progress">
+		  <div id="bosshps" class="progress-bar progress-bar-danger" role="progressbar" >
+		  </div>
+		</div>
 	</div>
     <div class="col-md-3" id="contactme">
         <div class="row">
@@ -92,7 +96,7 @@
 <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/craftyjs/Crafty/testing/dist/crafty-min.js"></script>
+<script type="text/javascript" src="crafty-min.js"></script>
 <script type="text/javascript" src="conf.js"></script>
 <script type="text/javascript" src="tool.js"></script>
 <script type="text/javascript" src="assets/maps/mapjs.js"></script>
@@ -178,6 +182,6 @@
     }
 
     Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT, document.getElementById('game'));
-
+    join(0);
 </script>
 </html>
