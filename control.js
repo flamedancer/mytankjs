@@ -80,7 +80,7 @@ function start_game(game_model, room_id) {
         }
         ROOM_INDEX = null;
         CONTROL = true;
-		enter_stage("1");
+		enter_stage(1);
         show_self_room();
     }
     else

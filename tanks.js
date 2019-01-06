@@ -86,6 +86,7 @@ function Tank(name, postion) {
 function MyTank(postion) {
 	
 	var tank = Tank("MyTank", postion);
+	tank.addComponent("Mouse");
 	tank.shot_interval = 12;
 	tank.now_shot_interval = tank.shot_interval;
 	tank.now_speed = 0;
@@ -168,6 +169,7 @@ function MyTank(postion) {
 
 	    });
 	}
+
 	if (!(CONTROL && player))
 		player = tank;
 	tank.bind('EnterFrame', function(){

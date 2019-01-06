@@ -79,7 +79,13 @@ function Stage_win(stage) {
 	this.check_conditions = function() {
         if (this.time_cnt <=0 && !this.stage.stage_over) {
             this.stage.stage_over = true;
-            enter_stage("1");
+            var next_stage = stage.stage_index + 1;
+            // 只有两 关 现在
+            if (next_stage != 3) {
+                enter_stage(next_stage);
+            } else {
+                enter_stage(1);
+            }
         }
 	};
 }
@@ -93,13 +99,14 @@ function Stage_fail(stage) {
 	this.check_conditions = function() {
         if (this.time_cnt <=0 && !this.stage.stage_over) {
             this.stage.stage_over = true;
-            enter_stage("1");
+            enter_stage(stage.stage_index);
         }
 	}
 }
 
-function Stage() {
+function Stage(stage_index) {
 	var stage = Crafty.e();
+    stage.stage_index = stage_index;
 	stage.mytank = null;
 	stage.mytank_boss = false;
 	stage.start_image = null;
@@ -150,7 +157,7 @@ function Stage() {
 }
 
 function Stage1() {
-	var stage = Stage();
+	var stage = Stage(1);
 	stage.start_image = "assets/ai_icetank.gif";
     stage.boss_img = "Bossspider";
 	stage.attr({
@@ -160,8 +167,12 @@ function Stage1() {
 			this.stage_begin = true;
             bgmap.bitmap_point_height = 32;
 			bgmap.reset('111');
-			if (CONTROL)
+			if (CONTROL) {
 			    both("MyTank", [88, 384]);
+                stage.bind('Click', function(e) {
+                   shot(player);
+                });
+            }
  		},
  		servant : function() {
  			this.servant_over = (bgmap.map_over && Crafty("ai").length == 0);
@@ -191,7 +202,7 @@ function Stage1() {
 }
 
 function Stage2() {
-	var stage = Stage();
+	var stage = Stage(2);
 	stage.start_image = "assets/icetank.gif";
     stage.boss_img = "Bossbouncer";
 	stage.attr({
@@ -242,7 +253,6 @@ Crafty.defineScene("stage2", function(attributes) {
 });
 
 function enter_stage(stage_num) {
-    stage_num = "2";
     BOTHS = {};
     player = null;
     if (cur_stage) 

@@ -34,7 +34,7 @@ CONF = {
 		"icon": "assets/mytank.gif",
 		"rect": [32, 32],
 		"speed": 1,
-		"maxhealth": 200,
+		"maxhealth": 500,
 		"bullet": "NormalBullet",
 		"died_name": "tankexplod",
 	},
@@ -65,7 +65,7 @@ CONF = {
     	"shot_rate": 0.05,
     	"turn_rate": 0.01,
        	"bullet": "Terrorsmallspider",
-    	"maxhealth": 2000,
+    	"maxhealth": 1000,
 		"died_name": "bulletexplod",
 	},
 	"Terrorsmallspider": {
@@ -74,7 +74,7 @@ CONF = {
 		"speed": [2, 2, 4, 6],
     	"shot_rate": 0,
     	"turn_rate": 0.1,
-    	"maxhealth": 10,
+    	"maxhealth": 5,
 		"died_name": "bulletexplod",
 	},
 	"NormalBullet": {
