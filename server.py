@@ -209,7 +209,7 @@ def start_server():
         app,
         debug=True,
         keyfile=cert_dir + 'www.key',
-        certfile=cert_dir + 'www.crt'
+        certfile=cert_dir + 'www.pem'
     ).serve_forever()
 
 
