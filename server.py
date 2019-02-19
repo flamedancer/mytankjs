@@ -200,7 +200,7 @@ def disconnect_player(player):
 path = os.path.dirname(geventwebsocket.__file__)
 agent = "gevent-websocket/%s" % (geventwebsocket.get_version())
 
-cert_dir = '../mydocker/nginx/config/cert/flame.cn/'
+cert_dir = os.path.dirname(os.getcwd()) + '/mydocker/nginx/config/cert/flame.cn/'
 
 def start_server():
     print("Running %s from %s" % (agent, path))
@@ -216,6 +216,7 @@ def start_server():
 def show_cert():
     import subprocess
 
+    print(cert_dir)
     output = subprocess.check_output('ls ' + cert_dir, shell=True)
     print(output)
 
