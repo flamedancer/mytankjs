@@ -202,11 +202,24 @@ agent = "gevent-websocket/%s" % (geventwebsocket.get_version())
 
 cert_dir = '../mydocker/nginx/config/cert/flame.cn/'
 
-print("Running %s from %s" % (agent, path))
-geventwebsocket.WebSocketServer(
- ("0.0.0.0", 9091),
- app,
- debug=True,
- keyfile=cert_dir + 'www.key',
- certfile=cert_dir + 'www.crt'
-).serve_forever()
+def start_server():
+    print("Running %s from %s" % (agent, path))
+    geventwebsocket.WebSocketServer(
+        ("0.0.0.0", 9091),
+        app,
+        debug=True,
+        keyfile=cert_dir + 'www.key',
+        certfile=cert_dir + 'www.crt'
+    ).serve_forever()
+
+
+def show_cert():
+    import subprocess
+
+    output = subprocess.check_output('ls ' + cert_dir, shell=True)
+    print(output)
+
+
+if __name__ == '__main__':
+    show_cert()
+    # start_server()
