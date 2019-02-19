@@ -222,5 +222,5 @@ def show_cert():
 
 
 if __name__ == '__main__':
-    show_cert()
-    # start_server()
+    # show_cert()
+    start_server()
