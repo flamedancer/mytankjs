@@ -108,7 +108,7 @@ class Player(object):
         try:
             self.wc.send(msg)
         except:
-            print "partner close"
+            print("partner close")
             disconnect_player(self)
 
     def send_partner(self, info):
@@ -148,21 +148,21 @@ class Player(object):
             leave_room(self)
         else:
             self.broad(info)
-        print self.core_id, "  :", msg
+        print(self.core_id, "  :", msg)
 
 def app(environ, start_response):
     ws = environ.get("wsgi.websocket")
     core_id = str(environ['HTTP_SEC_WEBSOCKET_KEY'])
     player = Player(ws, core_id)
     all_players.append(player)
-    print "connect: ", player.core_id
+    print("connect: ", player.core_id)
     send_room_infs(player)
     try:
         while True:
             msg = ws.receive()
             player.handler(msg)
-    except geventwebsocket.WebSocketError, ex:
-        print "websocet closse!"
+    except geventwebsocket.WebSocketError as ex:
+        print("websocet closse!")
     finally:
         disconnect_player(player)
 
@@ -193,13 +193,20 @@ def disconnect_player(player):
     leave_room(player)
     if player in all_players:
         all_players.remove(player)
-    print "disconnect: ", player.core_id
+    print("disconnect: ", player.core_id)
 
 
 
 path = os.path.dirname(geventwebsocket.__file__)
 agent = "gevent-websocket/%s" % (geventwebsocket.get_version())
 
+cert_dir = '../mydocker/nginx/config/cert/flame.cn/'
 
-print "Running %s from %s" % (agent, path)
-geventwebsocket.WebSocketServer(("0.0.0.0", 9091), app, debug=True).serve_forever()
+print("Running %s from %s" % (agent, path))
+geventwebsocket.WebSocketServer(
+ ("0.0.0.0", 9091),
+ app,
+ debug=True,
+ keyfile=cert_dir + 'www.key',
+ certfile=cert_dir + 'www.crt'
+).serve_forever()
